@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:suit_pro_rewards_flutter/providers/auth_provider.dart';
 import 'package:suit_pro_rewards_flutter/models/app/activity.dart';
 import 'package:suit_pro_rewards_flutter/models/app/flash_sale.dart';
 import 'package:suit_pro_rewards_flutter/models/app/web_stats.dart';

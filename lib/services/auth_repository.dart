@@ -17,8 +17,8 @@ class AuthRepository {
     // TODO: Implement Apple sign-in
   }
 
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
-    await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+  Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
+    return await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   Future<UserCredential> createUserWithEmailAndPassword(

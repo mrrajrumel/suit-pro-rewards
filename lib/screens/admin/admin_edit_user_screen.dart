@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:suit_pro_rewards_flutter/models/app/user.dart';
 import 'package:suit_pro_rewards_flutter/providers/admin/user_edit_view_model.dart';
 import 'package:flutter/services.dart';

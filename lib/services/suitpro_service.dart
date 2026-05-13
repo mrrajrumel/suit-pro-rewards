@@ -49,6 +49,14 @@ class SuitProService {
   Future<Response> getOrders() async {
     return await _dio.get('/api/v1/ecommerce/orders');
   }
+
+  Future<Response> getLoyaltySummary() async {
+    return await _dio.get('/api/v1/loyalty/summary');
+  }
+
+  Future<Response> getFlashSales() async {
+    return await _dio.get('/api/v1/ecommerce/flash-sales');
+  }
 }
 
 final suitProServiceProvider = Provider<SuitProService>((ref) {

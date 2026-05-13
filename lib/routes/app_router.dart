@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:suit_pro_rewards_flutter/screens/app/dashboard_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/member_layout.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/profile_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/rewards_screen.dart';

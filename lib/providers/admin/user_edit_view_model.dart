@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:suit_pro_rewards_flutter/providers/auth_provider.dart';
 import 'package:suit_pro_rewards_flutter/services/auth_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

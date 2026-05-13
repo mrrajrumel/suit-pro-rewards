@@ -29,7 +29,14 @@ This is the Flutter version of the Suit Pro Rewards app, migrated from React Nat
    ```bash
    flutter run
    ```
-Upgrade Command "flutter upgrade"
+
+### Useful Commands
+
+- **Analyze Code**: `flutter analyze`
+- **Clean Project**: `flutter clean`
+- **Format Code**: `dart format .`
+- **Upgrade Flutter**: `flutter upgrade`
+
 ### Build
 
 **Android**
