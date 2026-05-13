@@ -4,9 +4,12 @@ import 'package:suit_pro_rewards_flutter/screens/app/member_layout.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/profile_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/rewards_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/wallet_screen.dart';
-import 'package:suit_pro_rewards_flutter/screens/app/user_dashboard_screen.dart';
+import 'package:suit_pro_rewards_flutter/screens/app/dashboard_screen.dart';
+import 'package:suit_pro_rewards_flutter/screens/app/referral_screen.dart';
+import 'package:suit_pro_rewards_flutter/screens/app/placeholder_screens.dart';
 import 'package:suit_pro_rewards_flutter/screens/auth_gate.dart';
 import 'package:suit_pro_rewards_flutter/screens/landing_screen.dart';
+import 'package:suit_pro_rewards_flutter/screens/onboarding_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/edit_profile_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/admin/admin_dashboard_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/admin/manage_users_screen.dart';
@@ -25,69 +28,89 @@ class AppRouter {
     routes: [
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const AuthGate(),
+        builder: (context, state) => const AuthGate(),
       ),
       GoRoute(
         path: '/landing',
-        builder: (BuildContext context, GoRouterState state) =>
-            const LandingScreen(),
+        builder: (context, state) => const LandingScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
       ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
-        builder: (BuildContext context, GoRouterState state, Widget child) {
-          return MemberLayout(child: child);
-        },
+        builder: (context, state, child) => MemberLayout(child: child),
         routes: [
           GoRoute(
-            path: '/home',
-            builder: (BuildContext context, GoRouterState state) =>
-                const UserDashboardScreen(),
+            path: '/dashboard',
+            builder: (context, state) => const DashboardScreen(),
           ),
           GoRoute(
             path: '/wallet',
-            builder: (BuildContext context, GoRouterState state) =>
-                const WalletScreen(),
+            builder: (context, state) => const WalletScreen(),
           ),
           GoRoute(
             path: '/rewards',
-            builder: (BuildContext context, GoRouterState state) =>
-                const RewardsScreen(),
+            builder: (context, state) => const RewardsScreen(),
+          ),
+          GoRoute(
+            path: '/shop',
+            builder: (context, state) => const ShopScreen(),
           ),
           GoRoute(
             path: '/profile',
-            builder: (BuildContext context, GoRouterState state) =>
-                const ProfileScreen(),
+            builder: (context, state) => const ProfileScreen(),
             routes: [
               GoRoute(
                 path: 'edit',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const EditProfileScreen(),
+                builder: (context, state) => const EditProfileScreen(),
               ),
             ],
+          ),
+          GoRoute(
+            path: '/referral',
+            builder: (context, state) => const ReferralScreen(),
+          ),
+          GoRoute(
+            path: '/scan-receipt',
+            builder: (context, state) => const ScanReceiptScreen(),
+          ),
+          GoRoute(
+            path: '/notifications',
+            builder: (context, state) => const NotificationsScreen(),
+          ),
+          GoRoute(
+            path: '/website-link',
+            builder: (context, state) => const WebsiteLinkScreen(),
+          ),
+          GoRoute(
+            path: '/support',
+            builder: (context, state) => const SupportScreen(),
+          ),
+          GoRoute(
+            path: '/privacy',
+            builder: (context, state) => const PrivacyScreen(),
           ),
         ],
       ),
       GoRoute(
         path: '/admin',
-        builder: (BuildContext context, GoRouterState state) => const AdminDashboardScreen(),
-        redirect: (BuildContext context, GoRouterState state) {
+        builder: (context, state) => const AdminDashboardScreen(),
+        redirect: (context, state) {
           final container = ProviderScope.containerOf(context, listen: false);
           final user = container.read(userProvider).asData?.value;
-
-          if (user?.role != 'admin') {
-            return '/home'; // Redirect non-admins
-          }
-          return null; // Allow admins
+          if (user?.role != 'admin') return '/dashboard';
+          return null;
         },
         routes: [
           GoRoute(
             path: 'users',
-            builder: (BuildContext context, GoRouterState state) => const ManageUsersScreen(),
+            builder: (context, state) => const ManageUsersScreen(),
             routes: [
               GoRoute(
                 path: 'edit',
-                builder: (BuildContext context, GoRouterState state) {
+                builder: (context, state) {
                   final user = state.extra as AppUser;
                   return AdminEditUserScreen(user: user);
                 },
