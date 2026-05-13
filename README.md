@@ -110,11 +110,41 @@ lib/
 ├── models/       # Data models (User, Activity, Reward, etc.)
 ├── providers/    # Riverpod state management logic
 ├── routes/       # GoRouter navigation configuration
-├── screens/      # UI Screens (Auth, Home, Admin, Profile)
+├── screens/      # UI Screens and Feature implementation
+│   ├── auth/     # Authentication forms and logic
+│   ├── app/      # Core user features (Dashboard, Wallet, Rewards)
+│   ├── admin/    # Admin panel for user management
+│   └── shared/   # Common screens like Loading or Error
 ├── services/     # API repositories and Firebase services
 ├── themes/       # Dark/Light theme definitions
 └── widgets/      # Reusable UI components
-```
+
+---
+
+## 📱 Feature & UI Map
+
+Here is a breakdown of the key UI files and the features they handle:
+
+### 🔐 Authentication & Onboarding
+- **`landing_screen.dart`**: The entry point of the app with options for Social login (Google/Apple) and Email.
+- **`auth_form.dart`**: Dynamic form handling both Login and Registration with real-time validation.
+- **`auth_gate.dart`**: A smart wrapper that listens to auth state changes and routes users to either the Landing or Home screen.
+
+### 👤 Member Features (User Side)
+- **`user_dashboard_screen.dart`**: Personalized home screen showing point balance, tier status, and quick action buttons.
+- **`wallet_screen.dart`**: Detailed view of transaction history, loyalty points, and digital membership card.
+- **`rewards_screen.dart`**: Marketplace for browsing and redeeming exclusive vouchers and perks.
+- **`profile_screen.dart` & `edit_profile_screen.dart`**: Personal info management and app settings.
+- **`member_layout.dart`**: Provides the persistent bottom navigation and consistent layout across user screens.
+
+### 🛡️ Admin Panel
+- **`admin_dashboard_screen.dart`**: High-level overview and navigation for administrative tasks.
+- **`manage_users_screen.dart`**: List of all registered members with search and filtering capabilities.
+- **`admin_edit_user_screen.dart`**: Interface to manually adjust user points, change roles (Admin/User), and update member info.
+
+### 🛠️ Core Components
+- **`dashboard_screen.dart`**: Multi-functional dashboard containing the QR Scanner and real-time updates.
+- **`loading_screen.dart`**: A premium, custom-animated loading experience used during data fetching.
 
 ---
 
