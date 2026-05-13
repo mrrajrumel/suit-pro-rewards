@@ -29,7 +29,7 @@ dependencies:
   go_router: ^14.2.1
 
   # UI & UX
-  lucide_flutter: ^0.417.0
+  lucide_flutter: ^1.12.0
   flutter_svg: ^2.0.10+1
   qr_flutter: ^4.1.0
   flutter_markdown: ^0.7.1
