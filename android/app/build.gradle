@@ -1,5 +1,5 @@
 def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('adi-registration.properties')
+def keystorePropertiesFile = rootProject.file('android/adi-registration.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
