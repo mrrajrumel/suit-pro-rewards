@@ -1,0 +1,26 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+# Sensitive files
+/adi-registration.properties
+/android/app/google-services.json
+/android/app/suitpro_final.jks
+
+# IDE specific files
+.idea/
+.vscode/
+
+# Flutter specific files
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+
+# Log files
+*.log

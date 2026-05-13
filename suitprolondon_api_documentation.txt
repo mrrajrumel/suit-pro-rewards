@@ -1,0 +1,843 @@
+================================================================================
+                        SUITPROLONDON API DOCUMENTATION
+================================================================================
+
+Base URL: https://suitprolondon.com/api/v1
+
+Last Updated: May 9, 2026
+Documentation Version: 1.0
+
+================================================================================
+                              TABLE OF CONTENTS
+================================================================================
+
+1. Introduction
+2. Authenticating Requests
+3. Address Endpoints
+4. Ads Endpoints
+5. Authentication Endpoints
+6. Blog Endpoints
+7. Brands Endpoints
+8. Cart Endpoints
+
+================================================================================
+                              1. INTRODUCTION
+================================================================================
+
+This comprehensive API documentation provides all the information required to
+integrate with the Suitprolondon API. The API follows RESTful principles and
+returns JSON responses for all requests.
+
+As you work with the API, you will see code examples in different programming
+languages. You can switch between languages (bash, JavaScript, etc.) to view
+examples in your preferred format.
+
+Key Features:
+- RESTful API design
+- JSON request and response format
+- Comprehensive error handling
+- Support for multiple HTTP methods (GET, POST, PUT, DELETE)
+- Detailed parameter documentation for each endpoint
+
+================================================================================
+                        2. AUTHENTICATING REQUESTS
+================================================================================
+
+The Suitprolondon API does not require authentication for public endpoints.
+However, some endpoints marked with "requires authentication" will need valid
+credentials to be included in the request headers.
+
+For authenticated endpoints, include the following header:
+- Authorization: Bearer {token}
+
+================================================================================
+                          3. ADDRESS ENDPOINTS
+================================================================================
+
+The Address API provides endpoints for managing customer addresses, including
+creating, retrieving, updating, and deleting address records.
+
+---
+3.1 GET /api/v1/ecommerce/addresses
+    Get list of address by customer
+
+Description:
+    Retrieve a list of all addresses associated with a customer account.
+
+HTTP Method: GET
+Endpoint: /api/v1/ecommerce/addresses
+Authentication: Not required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Example Request (cURL):
+    curl --request GET \
+        --get "https://suitprolondon.com/api/v1/ecommerce/addresses" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json"
+
+Example Response (200):
+    {
+      "error": false,
+      "data": [
+        {
+          "id": 1,
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "phone": "0123456789",
+          "country": "United States",
+          "state": "California",
+          "city": "Los Angeles",
+          "address": "123 Main St",
+          "zip_code": "90001",
+          "is_default": true
+        }
+      ]
+    }
+
+---
+3.2 POST /api/v1/ecommerce/addresses
+    Create new address for customer
+
+Description:
+    Create a new address record for a customer. This endpoint requires
+    authentication to ensure the address is associated with the correct user.
+
+HTTP Method: POST
+Endpoint: /api/v1/ecommerce/addresses
+Authentication: Required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Body Parameters:
+    name (string, required)
+        The name of the address owner.
+        Example: "John Doe"
+
+    email (string, required)
+        The email address associated with this address.
+        Example: "john.doe@example.com"
+
+    phone (string, required)
+        The phone number for this address.
+        Example: "0123456789"
+
+    country (string, optional)
+        The country name or country code.
+        Example: "United States" or "US"
+
+    state (string, optional)
+        The state or province name.
+        Example: "California"
+
+    city (string, optional)
+        The city name.
+        Example: "Los Angeles"
+
+    address (string, optional)
+        The street address.
+        Example: "123 Main St"
+
+    is_default (boolean, optional)
+        Set this address as the default address.
+        Example: true
+
+    zip_code (string, optional)
+        The postal or ZIP code.
+        Example: "90001"
+
+Example Request (cURL):
+    curl --request POST \
+        "https://suitprolondon.com/api/v1/ecommerce/addresses" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json" \
+        --data "{
+        \"name\": \"John Doe\",
+        \"email\": \"john.doe@example.com\",
+        \"phone\": \"0123456789\",
+        \"country\": \"United States\",
+        \"state\": \"California\",
+        \"city\": \"Los Angeles\",
+        \"address\": \"123 Main St\",
+        \"is_default\": true,
+        \"zip_code\": \"90001\"
+    }"
+
+Example Response (201):
+    {
+      "error": false,
+      "data": {
+        "id": 2,
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "phone": "0123456789",
+        "country": "United States",
+        "state": "California",
+        "city": "Los Angeles",
+        "address": "123 Main St",
+        "zip_code": "90001",
+        "is_default": true
+      },
+      "message": "Address created successfully"
+    }
+
+---
+3.3 PUT /api/v1/ecommerce/addresses/{id}
+    Update an address
+
+Description:
+    Update an existing address record. This endpoint requires authentication
+    and the address ID must belong to the authenticated user.
+
+HTTP Method: PUT
+Endpoint: /api/v1/ecommerce/addresses/{id}
+Authentication: Required
+
+URL Parameters:
+    id (integer, required)
+        The unique identifier of the address to update.
+        Example: 1
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Body Parameters:
+    name (string, required)
+        The name of the address owner.
+        Example: "John Doe"
+
+    email (string, required)
+        The email address.
+        Example: "john.doe@example.com"
+
+    phone (string, required)
+        The phone number.
+        Example: "0123456789"
+
+    country (string, optional)
+        The country name or country code.
+        Example: "United States"
+
+    state (string, required)
+        The state or province name.
+        Example: "California"
+
+    city (string, required)
+        The city name.
+        Example: "Los Angeles"
+
+    address (string, required)
+        The street address.
+        Example: "123 Main St"
+
+    is_default (boolean, optional)
+        Set as default address.
+        Example: true
+
+    zip_code (string, optional)
+        The postal/zip code.
+        Example: "90001"
+
+Example Request (cURL):
+    curl --request PUT \
+        "https://suitprolondon.com/api/v1/ecommerce/addresses/1" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json" \
+        --data "{
+        \"name\": \"Jane Doe\",
+        \"email\": \"jane.doe@example.com\",
+        \"phone\": \"9876543210\",
+        \"country\": \"United States\",
+        \"state\": \"New York\",
+        \"city\": \"New York City\",
+        \"address\": \"456 Park Ave\",
+        \"is_default\": true,
+        \"zip_code\": \"10022\"
+    }"
+
+Example Response (200):
+    {
+      "error": false,
+      "data": {
+        "id": 1,
+        "name": "Jane Doe",
+        "email": "jane.doe@example.com",
+        "phone": "9876543210",
+        "country": "United States",
+        "state": "New York",
+        "city": "New York City",
+        "address": "456 Park Ave",
+        "zip_code": "10022",
+        "is_default": true
+      },
+      "message": "Address updated successfully"
+    }
+
+---
+3.4 DELETE /api/v1/ecommerce/addresses/{id}
+    Delete an address
+
+Description:
+    Delete an address record. This endpoint requires authentication and the
+    address ID must belong to the authenticated user.
+
+HTTP Method: DELETE
+Endpoint: /api/v1/ecommerce/addresses/{id}
+Authentication: Required
+
+URL Parameters:
+    id (integer, required)
+        The unique identifier of the address to delete.
+        Example: 1
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Example Request (cURL):
+    curl --request DELETE \
+        "https://suitprolondon.com/api/v1/ecommerce/addresses/1" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json"
+
+Example Response (200):
+    {
+      "error": false,
+      "data": null,
+      "message": "Address deleted successfully"
+    }
+
+---
+3.5 GET /api/v1/ecommerce/countries
+    Get list of available countries
+
+Description:
+    Retrieve a comprehensive list of all available countries that can be
+    used when creating or updating addresses.
+
+HTTP Method: GET
+Endpoint: /api/v1/ecommerce/countries
+Authentication: Not required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Example Request (cURL):
+    curl --request GET \
+        --get "https://suitprolondon.com/api/v1/ecommerce/countries" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json"
+
+Example Response (200):
+    {
+      "error": false,
+      "data": [
+        {
+          "id": 1,
+          "name": "United States",
+          "code": "US"
+        },
+        {
+          "id": 2,
+          "name": "Canada",
+          "code": "CA"
+        },
+        {
+          "id": 3,
+          "name": "United Kingdom",
+          "code": "GB"
+        }
+      ]
+    }
+
+================================================================================
+                            4. ADS ENDPOINTS
+================================================================================
+
+The Ads API provides endpoints for retrieving advertisement content based on
+specific keys or categories.
+
+---
+4.1 GET /api/v1/ads
+    Get ads
+
+Description:
+    Retrieve advertisement content filtered by specific ad keys. This endpoint
+    allows you to fetch ads for different sections of your application.
+
+HTTP Method: GET
+Endpoint: /api/v1/ads
+Authentication: Not required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Query Parameters:
+    keys[] (string array, optional)
+        Array of ad keys to filter by.
+        Example: keys[]=homepage-banner&keys[]=sidebar-banner
+
+Body Parameters:
+    keys (string array, optional)
+        Alternative way to pass ad keys in the request body.
+        Example: ["homepage-banner", "sidebar-banner"]
+
+Example Request (cURL):
+    curl --request GET \
+        --get "https://suitprolondon.com/api/v1/ads?keys[]=homepage-banner&keys[]=sidebar-banner" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json"
+
+Example Response (200):
+    {
+      "error": false,
+      "data": [
+        {
+          "id": 1,
+          "key": "homepage-banner",
+          "title": "Summer Sale",
+          "image_url": "https://example.com/summer-sale.jpg",
+          "link": "https://suitprolondon.com/sale"
+        },
+        {
+          "id": 2,
+          "key": "sidebar-banner",
+          "title": "New Collection",
+          "image_url": "https://example.com/new-collection.jpg",
+          "link": "https://suitprolondon.com/new"
+        }
+      ]
+    }
+
+================================================================================
+                      5. AUTHENTICATION ENDPOINTS
+================================================================================
+
+The Authentication API provides endpoints for user registration, login, and
+account management.
+
+---
+5.1 POST /api/v1/register
+    Register
+
+Description:
+    Register a new user account. Users can create an account using either
+    their full name or first and last names.
+
+HTTP Method: POST
+Endpoint: /api/v1/register
+Authentication: Not required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Body Parameters:
+    first_name (string, optional)
+        The first name of the user. Required if 'name' is not provided.
+        Must be at least 2 characters and not exceed 120 characters.
+        Example: "John"
+
+    last_name (string, optional)
+        The last name of the user. Required if 'name' is not provided.
+        Must be at least 2 characters and not exceed 120 characters.
+        Example: "Smith"
+
+    name (string, required)
+        The full name of the user.
+        Example: "John Smith"
+
+    email (string, required)
+        The email address of the user.
+        Example: "john.smith@example.com"
+
+    password (string, required)
+        The password for the account.
+        Example: "SecurePassword123!"
+
+    phone (string, required)
+        The phone number of the user.
+        Example: "1234567890"
+
+    password_confirmation (string, required)
+        Confirmation of the password. Must match the password field.
+        Example: "SecurePassword123!"
+
+Example Request (cURL):
+    curl --request POST \
+        "https://suitprolondon.com/api/v1/register" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json" \
+        --data "{
+        \"first_name\": \"John\",
+        \"last_name\": \"Smith\",
+        \"name\": \"John Smith\",
+        \"email\": \"john.smith@example.com\",
+        \"password\": \"SecurePassword123!\",
+        \"phone\": \"1234567890\",
+        \"password_confirmation\": \"SecurePassword123!\"
+    }"
+
+Example Response (201):
+    {
+      "error": false,
+      "data": {
+        "id": 1,
+        "name": "John Smith",
+        "email": "john.smith@example.com",
+        "phone": "1234567890"
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "message": "User registered successfully"
+    }
+
+---
+5.2 POST /api/v1/login
+    Login
+
+Description:
+    Authenticate a user and receive an authentication token for subsequent
+    API requests.
+
+HTTP Method: POST
+Endpoint: /api/v1/login
+Authentication: Not required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Body Parameters:
+    email (string, required)
+        The email address of the user.
+        Example: "john.smith@example.com"
+
+    password (string, required)
+        The password for the account.
+        Example: "SecurePassword123!"
+
+Example Request (cURL):
+    curl --request POST \
+        "https://suitprolondon.com/api/v1/login" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json" \
+        --data "{
+        \"email\": \"john.smith@example.com\",
+        \"password\": \"SecurePassword123!\"
+    }"
+
+Example Response (200):
+    {
+      "error": false,
+      "data": {
+        "id": 1,
+        "name": "John Smith",
+        "email": "john.smith@example.com"
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "message": "Login successful"
+    }
+
+---
+5.3 GET /api/v1/logout
+    Logout
+
+Description:
+    Logout the current authenticated user and invalidate their session token.
+
+HTTP Method: GET
+Endpoint: /api/v1/logout
+Authentication: Required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+    Authorization: Bearer {token}
+
+Example Request (cURL):
+    curl --request GET \
+        --get "https://suitprolondon.com/api/v1/logout" \
+        --header "Content-Type: application/json" \
+        --header "Accept: application/json" \
+        --header "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+Example Response (200):
+    {
+      "error": false,
+      "data": null,
+      "message": "Logout successful"
+    }
+
+================================================================================
+                          6. BLOG ENDPOINTS
+================================================================================
+
+The Blog API provides endpoints for accessing blog posts, categories, tags,
+and related content.
+
+---
+6.1 GET /api/v1/posts
+    Get Posts
+
+Description:
+    Retrieve a list of all published blog posts.
+
+HTTP Method: GET
+Endpoint: /api/v1/posts
+Authentication: Not required
+
+Headers:
+    Content-Type: application/json
+    Accept: application/json
+
+Example Response (200):
+    {
+      "error": false,
+      "data": [
+        {
+          "id": 1,
+          "title": "Getting Started with Our API",
+          "slug": "getting-started-with-our-api",
+          "content": "...",
+          "author": "Admin",
+          "created_at": "2026-05-01T10:00:00Z"
+        }
+      ]
+    }
+
+---
+6.2 GET /api/v1/categories
+    Get Categories
+
+Description:
+    Retrieve a list of all blog post categories.
+
+HTTP Method: GET
+Endpoint: /api/v1/categories
+Authentication: Not required
+
+---
+6.3 GET /api/v1/tags
+    Get Tags
+
+Description:
+    Retrieve a list of all blog post tags.
+
+HTTP Method: GET
+Endpoint: /api/v1/tags
+Authentication: Not required
+
+---
+6.4 GET /api/v1/posts/{slug}
+    Get Post by Slug
+
+Description:
+    Retrieve a specific blog post by its URL slug.
+
+HTTP Method: GET
+Endpoint: /api/v1/posts/{slug}
+Authentication: Not required
+
+URL Parameters:
+    slug (string, required)
+        The URL-friendly slug of the post.
+        Example: "getting-started-with-our-api"
+
+================================================================================
+                          7. BRANDS ENDPOINTS
+================================================================================
+
+The Brands API provides endpoints for accessing brand information and their
+associated products.
+
+---
+7.1 GET /api/v1/ecommerce/brands
+    Get Brands
+
+Description:
+    Retrieve a list of all available brands.
+
+HTTP Method: GET
+Endpoint: /api/v1/ecommerce/brands
+Authentication: Not required
+
+---
+7.2 GET /api/v1/ecommerce/brands/{slug}
+    Get Brand by Slug
+
+Description:
+    Retrieve a specific brand by its URL slug.
+
+HTTP Method: GET
+Endpoint: /api/v1/ecommerce/brands/{slug}
+Authentication: Not required
+
+URL Parameters:
+    slug (string, required)
+        The URL-friendly slug of the brand.
+        Example: "nike"
+
+---
+7.3 GET /api/v1/ecommerce/brands/{id}/products
+    Get Brand Products
+
+Description:
+    Retrieve all products associated with a specific brand.
+
+HTTP Method: GET
+Endpoint: /api/v1/ecommerce/brands/{id}/products
+Authentication: Not required
+
+URL Parameters:
+    id (integer, required)
+        The unique identifier of the brand.
+        Example: 1
+
+================================================================================
+                            8. CART ENDPOINTS
+================================================================================
+
+The Cart API provides endpoints for managing shopping cart operations.
+
+---
+8.1 POST /api/v1/ecommerce/cart
+    Add to Cart
+
+Description:
+    Add a product to the shopping cart.
+
+HTTP Method: POST
+Endpoint: /api/v1/ecommerce/cart
+Authentication: Not required
+
+Body Parameters:
+    product_id (integer, required)
+        The ID of the product to add.
+        Example: 1
+
+    quantity (integer, required)
+        The quantity to add.
+        Example: 2
+
+---
+8.2 GET /api/v1/ecommerce/cart/{id}
+    Get Cart
+
+Description:
+    Retrieve the current shopping cart contents.
+
+HTTP Method: GET
+Endpoint: /api/v1/ecommerce/cart/{id}
+Authentication: Not required
+
+URL Parameters:
+    id (integer, required)
+        The cart ID.
+        Example: 1
+
+---
+8.3 PUT /api/v1/ecommerce/cart/{id}
+    Update Cart Item
+
+Description:
+    Update the quantity of an item in the shopping cart.
+
+HTTP Method: PUT
+Endpoint: /api/v1/ecommerce/cart/{id}
+Authentication: Not required
+
+URL Parameters:
+    id (integer, required)
+        The ID of the cart item.
+        Example: 1
+
+Body Parameters:
+    quantity (integer, required)
+        The new quantity.
+        Example: 5
+
+---
+8.4 DELETE /api/v1/ecommerce/cart/{id}
+    Remove from Cart
+
+Description:
+    Remove a product from the shopping cart.
+
+HTTP Method: DELETE
+Endpoint: /api/v1/ecommerce/cart/{id}
+Authentication: Not required
+
+URL Parameters:
+    id (integer, required)
+        The ID of the cart item to remove.
+        Example: 1
+
+---
+8.5 POST /api/v1/ecommerce/checkout/taxes/calculate
+    Calculate Taxes
+
+Description:
+    Calculate taxes for a checkout based on the products in the cart.
+
+HTTP Method: POST
+Endpoint: /api/v1/ecommerce/checkout/taxes/calculate
+Authentication: Not required
+
+Body Parameters:
+    products (array, required)
+        List of products with id and quantity.
+        Example: [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 1}]
+
+================================================================================
+                              ERROR HANDLING
+================================================================================
+
+All API responses include an "error" field indicating success or failure.
+Error responses will include a "message" field with details about the error.
+
+Common HTTP Status Codes:
+    200 OK - Request successful
+    201 Created - Resource created successfully
+    400 Bad Request - Invalid request parameters
+    401 Unauthorized - Authentication required or failed
+    404 Not Found - Resource not found
+    500 Internal Server Error - Server error
+
+Example Error Response:
+    {
+      "error": true,
+      "message": "Invalid email address",
+      "data": null
+    }
+
+================================================================================
+                            RATE LIMITING
+================================================================================
+
+The API implements rate limiting to ensure fair usage. Clients are limited to
+1000 requests per hour. Rate limit information is included in response headers:
+
+    X-RateLimit-Limit: 1000
+    X-RateLimit-Remaining: 999
+    X-RateLimit-Reset: 1620000000
+
+================================================================================
+                          SUPPORT & RESOURCES
+================================================================================
+
+For additional support and interactive API testing, visit:
+https://suitprolondon.com/public/docs/
+
+This documentation was generated on May 9, 2026 and reflects the current
+state of the Suitprolondon API.
+
+================================================================================
+                              END OF DOCUMENTATION
+================================================================================
