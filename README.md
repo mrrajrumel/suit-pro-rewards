@@ -1,116 +1,135 @@
 # Suit Pro Rewards - Flutter
 
-This is the Flutter version of the Suit Pro Rewards app, migrated from React Native.
+![Suit Pro Rewards](Suit-Pro.png)
 
-## Getting Started
+Suit Pro Rewards is a premium loyalty and rewards application for **Suit Pro London**. Migrated from React Native to Flutter, this version offers superior performance, smooth animations, and a robust codebase optimized for both Android and iOS.
+
+---
+
+## 🚀 Key Features
+
+- **Exclusive Rewards**: Access and redeem loyalty points and vouchers.
+- **Real-time Sync**: Seamless integration with the Suit Pro London website and Firebase.
+- **Smart Wallet**: Track points, tier status (Silver, Gold, Platinum), and history.
+- **Admin Panel**: Manage users, adjust points, and oversee rewards directly from the app.
+- **QR Scanner**: Built-in mobile scanner for seamless transactions.
+- **Responsive UI**: Optimized for all screen sizes with a premium dark theme.
+
+---
+
+## 🛠️ Tech Stack
+
+- **State Management**: [Riverpod](https://riverpod.dev/)
+- **Backend**: [Firebase](https://firebase.google.com/) (Auth, Firestore, Messaging, Storage)
+- **Networking**: [Dio](https://pub.dev/packages/dio) for REST API integration.
+- **Routing**: [GoRouter](https://pub.dev/packages/go_router) for deep-linking and declarative navigation.
+- **Icons**: [Lucide Flutter](https://pub.dev/packages/lucide_flutter)
+
+---
+
+## 📦 Getting Started
 
 ### Prerequisites
 
-- [Flutter SDK](https://flutter.dev/docs/get-started/install)
-- [VS Code](https://code.visualstudio.com/)
-- [Flutter extension for VS Code](https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter)
+Before you begin, ensure you have the following installed:
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.0.0 or higher)
+- [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/)
+- [Java Development Kit (JDK)](https://www.oracle.com/java/technologies/downloads/) (v17 recommended)
+- **For iOS**: macOS with [Xcode](https://developer.apple.com/xcode/) and [CocoaPods](https://cocoapods.org/).
 
-### Setup
+### Installation & Setup
 
 1. **Clone the repository**
-
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/mrrajrumel/suit-pro-rewards.git
+   cd suit-pro-rewards
    ```
 
 2. **Install dependencies**
-
    ```bash
    flutter pub get
    ```
 
-3. **Run the app**
+3. **Firebase Configuration**
+   - Place your `google-services.json` in `android/app/`.
+   - Place your `GoogleService-Info.plist` in `ios/Runner/`.
+   - Update `lib/core/firebase_options.dart` if you add new platforms.
 
-   ```bash
-   flutter run
-   ```
+---
 
-### Useful Commands
+## 🖥️ Running the App (Preview)
 
-- **Analyze Code**: `flutter analyze`
-- **Clean Project**: `flutter clean`
-- **Format Code**: `dart format .`
-- **Upgrade Flutter**: `flutter upgrade`
+You can preview the app on different platforms using the commands below:
 
-### Build
-
-**Android**
-
+### 1. Web Preview (Chrome)
 ```bash
-flutter build apk
+flutter run -d chrome
+```
+
+### 2. Android Preview (Emulator or Physical Device)
+```bash
+flutter run -d android
+```
+
+### 3. iOS Preview (Simulator or Physical Device)
+```bash
+flutter run -d ios
+```
+
+---
+
+## 🏗️ Build Guide
+
+### Android
+**Generate APK (For testing/sharing)**
+```bash
+flutter build apk --release
+```
+*Output: `build/app/outputs/flutter-apk/app-release.apk`*
+
+**Generate App Bundle (For Play Store)**
+```bash
 flutter build appbundle
 ```
+*Output: `build/app/outputs/bundle/release/app-release.aab`*
 
-**iOS**
-
+### iOS
+**Generate IPA (For App Store/TestFlight)**
 ```bash
-flutter build ios
+flutter build ios --release
+```
+*Note: You must have an active Apple Developer account and configure signing in Xcode.*
+
+---
+
+## 📂 Project Structure
+
+```text
+lib/
+├── core/         # Firebase configuration and app-wide constants
+├── models/       # Data models (User, Activity, Reward, etc.)
+├── providers/    # Riverpod state management logic
+├── routes/       # GoRouter navigation configuration
+├── screens/      # UI Screens (Auth, Home, Admin, Profile)
+├── services/     # API repositories and Firebase services
+├── themes/       # Dark/Light theme definitions
+└── widgets/      # Reusable UI components
 ```
 
-## Migration Notes
+---
 
-### What was converted
+## 🔧 Useful Commands
 
-- The entire app was converted from React Native to Flutter.
-- All screens, UI design, spacing, fonts, colors, icons, animations, transitions, and responsiveness were preserved.
-- All current app features and business logic were maintained.
-- The performance and code structure were optimized for production.
+| Command | Purpose |
+| :--- | :--- |
+| `flutter analyze` | Check for code errors and warnings |
+| `dart format .` | Format all files according to Dart guidelines |
+| `flutter clean` | Clear build cache (useful for fixing build errors) |
+| `flutter doctor` | Check your Flutter environment status |
 
-### What was removed
+---
 
-- Unused packages, dead code, deprecated libraries, and duplicate assets were removed.
-- Unused screens/components and unused node modules references were removed.
-- React-only configurations not needed anymore were removed.
+## 📜 License
 
-### What was optimized
-
-- The rendering was optimized.
-- Unnecessary rebuilds were reduced.
-- `const` widgets were used properly.
-- The image loading was optimized.
-- The startup speed was improved.
-
-## Dependency Documentation
-
-| React Native | Flutter |
-| --- | --- |
-| `@capacitor/push-notifications` | `firebase_messaging` |
-| `@capacitor-firebase/authentication` | `firebase_auth` |
-| `react-router-dom` | `go_router` |
-| `@tanstack/react-query` | `flutter_riverpod` |
-| `axios` | `dio` |
-| `lucide-react` | `lucide_flutter` |
-| `qrcode.react` | `qr_flutter` |
-| `html5-qrcode` | `mobile_scanner` |
-| `react-hot-toast` | `fluttertoast` |
-| `framer-motion` | Flutter's animation framework |
-| `tailwindcss` | Flutter's widget-based styling |
-
-## Environment Setup Guide
-
-### Flutter SDK
-
-Follow the instructions on the [Flutter website](https://flutter.dev/docs/get-started/install) to install the Flutter SDK.
-
-### VS Code
-
-1. Install [VS Code](https://code.visualstudio.com/).
-2. Install the [Flutter extension for VS Code](https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter).
-
-### Emulator/Device Setup
-
-Follow the instructions on the [Flutter website](https://flutter.dev/docs/get-started/ws-test-drive?tab=android) to set up an emulator or a physical device.
-
-## Firebase Setup Guide
-
-1. Go to the [Firebase console](https://console.firebase.google.com/).
-2. Create a new Firebase project, or use your existing `suitprolondonrewords` project.
-3. Register your Flutter app with your Firebase project.
-4. Download the `google-services.json` file for your Android app and place it in the `android/app` directory of your Flutter project.
-5. Download the `GoogleService-Info.plist` file for your iOS app and place it in the `ios/Runner` directory of your Flutter project.
-6. Add your Firebase project credentials to the `lib/core/firebase_options.dart` file.
+This project is proprietary and confidential. Unauthorized copying of this file, via any medium, is strictly prohibited.
+Designed and Developed for **Suit Pro London**.
