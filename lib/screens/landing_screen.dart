@@ -4,6 +4,7 @@ import 'package:suit_pro_rewards_flutter/providers/auth_view_model.dart';
 import 'package:suit_pro_rewards_flutter/screens/auth/auth_form.dart';
 import 'package:suit_pro_rewards_flutter/widgets/google_icon.dart';
 import 'package:suit_pro_rewards_flutter/widgets/logo.dart';
+import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 
 enum AuthMode { landing, login, register }
 
@@ -40,46 +41,41 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
       return AuthForm(_submitAuthForm, isLoading);
     }
 
+    // This is the main landing view, now matching the original design
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ElevatedButton.icon(
+        ElevatedButton(
           onPressed: () => setState(() => _authMode = AuthMode.login),
-          icon: const Icon(Icons.email),
-          label: const Text('Continue with Email'),
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+          child: const Text('Join With Email'),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 24),
         Row(
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () { /* TODO: Google Sign In */ },
                 icon: const GoogleIcon(),
                 label: const Text('Google'),
                 style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  foregroundColor: AppTheme.foreground,
+                  side: BorderSide(color: AppTheme.border),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () { /* TODO: Apple Sign In */ },
                 icon: const Icon(Icons.apple),
                 label: const Text('Apple'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                 style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.foreground,
+                  side: BorderSide(color: AppTheme.border),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ),
@@ -92,45 +88,64 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black, Color(0xFF1A1A1A)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: LayoutBuilder( // Use LayoutBuilder for responsive sizing
-              builder: (context, constraints) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Spacer(flex: 2),
-                    const Logo(size: 80),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: constraints.maxWidth > 400 ? 400 : constraints.maxWidth, // Limit width on larger screens
-                      child: const Text(
-                        'Exclusive Rewards, Unparalleled Service',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    const Spacer(flex: 3),
-                    _buildAuthMode(),
-                    const Spacer(flex: 1),
-                  ],
-                );
-              }
+      body: Stack(
+        children: [
+          // Background Gradients
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                color: AppTheme.gold.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
             ),
           ),
-        ),
+          Positioned(
+            bottom: -100,
+            left: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                color: AppTheme.gold.withOpacity(0.05),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Spacer(),
+                  const Logo(size: 90),
+                  const SizedBox(height: 48),
+                  Text(
+                    'Join the',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                   Text(
+                    'London Club.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: AppTheme.gold,
+                    ),
+                  ),
+                  const Spacer(flex: 2),
+                  _buildAuthMode(),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
