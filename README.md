@@ -131,7 +131,7 @@ lib/
 
 ## 👨‍💻 Project Lead Developer
 
-Developed with ❤️ by **Rumel Ahmed**  
+**Rumel Ahmed**
 *Project Lead Developer at Global Talent Hire Company*
 
 Feel free to connect or reach out for inquiries:
