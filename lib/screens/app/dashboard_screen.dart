@@ -336,9 +336,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   child: Column(
                     children: [
-                      Text(t['label']!, style: TextStyle(color: isActive ? Colors.black : Colors.white.withOpacity(0.4), fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                      Text(t['label']!, style: TextStyle(color: isActive ? Colors.black : Colors.white.withValues(alpha: 0.4), fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
                       SizedBox(height: 4.h),
-                      Text(t['bonus']!, style: TextStyle(color: isActive ? Colors.black.withOpacity(0.6) : Colors.white.withOpacity(0.2), fontSize: 7.sp, fontWeight: FontWeight.w700)),
+                      Text(t['bonus']!, style: TextStyle(color: isActive ? Colors.black.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.2), fontSize: 7.sp, fontWeight: FontWeight.w700)),
                     ],
                   ),
                 ),
