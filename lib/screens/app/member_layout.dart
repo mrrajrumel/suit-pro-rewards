@@ -68,11 +68,18 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
         return Container(
           width: double.infinity,
           margin: EdgeInsets.all(24.w),
-          padding: EdgeInsets.all(32.w),
+          padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 40.h),
           decoration: BoxDecoration(
             color: AppTheme.card,
             borderRadius: BorderRadius.circular(40.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+            border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 40,
+                offset: const Offset(0, 20),
+              ),
+            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -90,23 +97,27 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      SizedBox(width: 8.w),
+                      SizedBox(width: 12.w),
                       Text(
                         'Discover More',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ],
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(LucideIcons.x),
+                    icon: Icon(LucideIcons.x, size: 20.sp),
                     style: IconButton.styleFrom(
                       backgroundColor: AppTheme.secondary,
+                      foregroundColor: AppTheme.mutedForeground,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 32.h),
               _buildMenuItem(
                 label: 'Visit Website',
                 icon: LucideIcons.globe,
@@ -141,7 +152,7 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
                 },
               ),
               if (isAdmin) ...[
-                SizedBox(height: 8.h),
+                SizedBox(height: 12.h),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
@@ -151,6 +162,10 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
                     },
                     icon: const Icon(LucideIcons.settings, size: 16),
                     label: const Text('GO TO ADMIN CONSOLE'),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 18.h),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+                    ),
                   ),
                 ),
               ],
@@ -164,16 +179,19 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.redAccent,
                     side: BorderSide(color: Colors.redAccent.withOpacity(0.2)),
+                    padding: EdgeInsets.symmetric(vertical: 18.h),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
                   ),
                 ),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 32.h),
               Text(
                 'SUIT PRO REWARDS • VERSION 1.1.0',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       fontSize: 8.sp,
                       fontStyle: FontStyle.italic,
                       letterSpacing: 3,
+                      color: AppTheme.mutedForeground.withOpacity(0.4),
                     ),
               ),
             ],

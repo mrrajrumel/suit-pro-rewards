@@ -50,20 +50,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             backgroundColor: AppTheme.card,
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 64.h),
+                  SizedBox(height: 56.h),
                   _buildHeader(),
                   SizedBox(height: 32.h),
                   _buildGreeting(user.fullName, user.tier),
                   SizedBox(height: 32.h),
-                  LifestyleConcierge(tier: user.tier, products: const []), // Products would come from a provider
+                  LifestyleConcierge(tier: user.tier, products: dashboardState.products.asData?.value ?? []),
                   SizedBox(height: 32.h),
                   const AIStyleGuide(),
-                  SizedBox(height: 32.h),
-                  _buildFlashSales(dashboardState.flashSales),
+                  if (dashboardState.flashSales.asData?.value.isNotEmpty ?? false) ...[
+                    SizedBox(height: 32.h),
+                    _buildFlashSales(dashboardState.flashSales),
+                  ],
                   SizedBox(height: 32.h),
                   _buildTierProgress(user.tier),
                   SizedBox(height: 32.h),
@@ -82,7 +84,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   _buildActivityHistory(dashboardState.activities),
                   SizedBox(height: 32.h),
                   const PointsInfo(),
-                  SizedBox(height: 100.h),
+                  SizedBox(height: 120.h),
                 ],
               ),
             ),
@@ -144,8 +146,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
         ),
         child: Icon(icon, color: AppTheme.gold, size: 16.sp)
-            .animate(target: isRotating ? 1 : 0)
-            .rotate(duration: 1.seconds, iterations: -1),
+            .animate(target: isRotating ? 1 : 0, onPlay: (controller) => controller.repeat())
+            .rotate(duration: 1.seconds),
       ),
     );
   }
@@ -156,7 +158,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       children: [
         Text.rich(
           TextSpan(
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 32.sp),
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700),
             children: [
               const TextSpan(text: 'Welcome, '),
               TextSpan(
@@ -166,14 +168,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ],
           ),
         ),
-        SizedBox(height: 4.h),
+        SizedBox(height: 6.h),
         Row(
           children: [
-            Text('$tier Tier Status', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 14.sp)),
+            Text('$tier Tier Status', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 13.sp, fontWeight: FontWeight.w500)),
             SizedBox(width: 8.w),
             Container(width: 4.w, height: 4.h, decoration: BoxDecoration(color: AppTheme.gold.withOpacity(0.3), shape: BoxShape.circle)),
             SizedBox(width: 8.w),
-            Text('Exclusive Benefits Active', style: TextStyle(color: AppTheme.gold, fontSize: 14.sp, fontWeight: FontWeight.bold)),
+            Text('Exclusive Benefits Active', style: TextStyle(color: AppTheme.gold, fontSize: 13.sp, fontWeight: FontWeight.w700)),
           ],
         ),
       ],
@@ -274,36 +276,40 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       decoration: BoxDecoration(
         color: AppTheme.card,
         borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+        border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
+        boxShadow: AppTheme.premiumShadow,
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('YOUR JOURNEY', style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10.sp, letterSpacing: 3)),
-              Text('VIEW STATUS', style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 8.sp, letterSpacing: 1)),
+              Text('YOUR JOURNEY', style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 9.sp, letterSpacing: 3, fontWeight: FontWeight.w900)),
+              GestureDetector(
+                onTap: () => context.go('/profile'),
+                child: Text('VIEW STATUS', style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 8.sp, letterSpacing: 1, color: AppTheme.mutedForeground, fontWeight: FontWeight.w700)),
+              ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 20.h),
           Row(
             children: tiers.map((t) {
               final bool isActive = t['label'] == currentTier.toUpperCase();
               return Expanded(
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 4.w),
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
                   decoration: BoxDecoration(
-                    color: isActive ? AppTheme.gold : AppTheme.background.withOpacity(0.2),
+                    color: isActive ? AppTheme.gold : AppTheme.background.withOpacity(0.4),
                     borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: isActive ? AppTheme.gold : AppTheme.gold.withOpacity(0.05)),
-                    boxShadow: isActive ? [BoxShadow(color: AppTheme.gold.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4))] : null,
+                    border: Border.all(color: isActive ? AppTheme.gold : AppTheme.gold.withOpacity(0.08)),
+                    boxShadow: isActive ? [BoxShadow(color: AppTheme.gold.withOpacity(0.25), blurRadius: 12, offset: const Offset(0, 4))] : null,
                   ),
                   child: Column(
                     children: [
-                      Text(t['label']!, style: TextStyle(color: isActive ? Colors.black : Colors.white.withOpacity(0.4), fontSize: 8.sp, fontWeight: FontWeight.black)),
+                      Text(t['label']!, style: TextStyle(color: isActive ? Colors.black : Colors.white.withOpacity(0.4), fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
                       SizedBox(height: 4.h),
-                      Text(t['bonus']!, style: TextStyle(color: isActive ? Colors.black.withOpacity(0.6) : Colors.white.withOpacity(0.2), fontSize: 7.sp, fontWeight: FontWeight.bold)),
+                      Text(t['bonus']!, style: TextStyle(color: isActive ? Colors.black.withOpacity(0.6) : Colors.white.withOpacity(0.2), fontSize: 7.sp, fontWeight: FontWeight.w700)),
                     ],
                   ),
                 ),
@@ -346,7 +352,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('CLICK TO LINK', style: TextStyle(color: Colors.black, fontSize: 9.sp, fontWeight: FontWeight.black, letterSpacing: 1)),
+                      Text('CLICK TO LINK', style: TextStyle(color: Colors.black, fontSize: 9.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
                       SizedBox(width: 8.w),
                       Icon(LucideIcons.chevronRight, size: 12.sp, color: Colors.black),
                     ],
@@ -362,12 +368,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Widget _buildQuickActions() {
     final actions = [
-      {'icon': LucideIcons.qrCode, 'label': 'Scan', 'color': AppTheme.gold, 'path': '/scan-receipt'},
+      {'icon': LucideIcons.qrCode, 'label': 'Scan', 'color': AppTheme.gold, 'path': '/scan-receipt', 'special': true},
       {'icon': LucideIcons.wallet, 'label': 'Wallet', 'color': Colors.blue, 'path': '/wallet'},
       {'icon': LucideIcons.gift, 'label': 'Rewards', 'color': Colors.purple, 'path': '/rewards'},
-      {'icon': LucideIcons.shoppingBag, 'label': 'Shop', 'color': Colors.emerald, 'path': '/shop'},
+      {'icon': LucideIcons.shoppingBag, 'label': 'Shop', 'color': Colors.green, 'path': '/shop'},
       {'icon': LucideIcons.share2, 'label': 'Refer', 'color': Colors.orange, 'path': '/referral'},
-      {'icon': LucideIcons.clock, 'label': 'History', 'color': Colors.slate, 'path': '/notifications'},
+      {'icon': LucideIcons.clock, 'label': 'History', 'color': Colors.blueGrey, 'path': '/notifications'},
     ];
 
     return GridView.builder(
@@ -382,6 +388,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       itemCount: actions.length,
       itemBuilder: (context, index) {
         final color = actions[index]['color'] as Color;
+        final bool isSpecial = actions[index]['special'] == true;
+        
         return GestureDetector(
           onTap: () => context.go(actions[index]['path'] as String),
           child: Column(
@@ -392,18 +400,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: color.withOpacity(0.2)),
+                  border: Border.all(color: color.withOpacity(0.1)),
+                  boxShadow: isSpecial ? [BoxShadow(color: color.withOpacity(0.15), blurRadius: 12, offset: const Offset(0, 4))] : null,
                 ),
                 child: Icon(actions[index]['icon'] as IconData, color: color, size: 24.sp),
               ),
               SizedBox(height: 8.h),
               Text(
                 (actions[index]['label'] as String).toUpperCase(),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 8.sp, letterSpacing: 1),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 8.5.sp, letterSpacing: 1, color: AppTheme.mutedForeground, fontWeight: FontWeight.w600),
               ),
             ],
           ),
-        );
+        ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.1, end: 0);
       },
     );
   }
@@ -426,7 +435,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
               SizedBox(width: 16.w),
               _buildSocialCard(
-                icon: LucideIcons.instagram,
+                icon: LucideIcons.camera,
                 title: 'INSTAGRAM',
                 subtitle: 'Follow our latest styles & collections',
                 color: Colors.purple,

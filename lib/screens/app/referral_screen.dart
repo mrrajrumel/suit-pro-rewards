@@ -41,7 +41,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     final userAsync = ref.watch(userProvider);
     final user = userAsync.asData?.value;
 
-    final String referralCode = user?.referralCode ?? user?.id.substring(0, 8).toUpperCase() ?? 'SUITPRO';
+    final String referralCode = user?.referralCode ?? user?.uid.substring(0, 8).toUpperCase() ?? 'SUITPRO';
     final String referralLink = 'https://suitprolondon.app/join?ref=$referralCode';
 
     return Scaffold(
@@ -94,23 +94,17 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       decoration: BoxDecoration(
         color: AppTheme.card,
         borderRadius: BorderRadius.circular(40.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
+        boxShadow: AppTheme.premiumShadow,
       ),
       child: Stack(
         children: [
           Positioned(
-            right: -20.w,
-            top: -20.h,
+            right: -25.w,
+            top: -25.h,
             child: Opacity(
               opacity: 0.05,
-              child: Icon(LucideIcons.trophy, size: 100.sp, color: AppTheme.gold),
+              child: Icon(LucideIcons.trophy, size: 120.sp, color: AppTheme.gold),
             ),
           ),
           Column(
@@ -127,19 +121,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               SizedBox(height: 24.h),
               Text(
                 'Spread the Excellence',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20.sp),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 22.sp, fontWeight: FontWeight.w700),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 12.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Text(
                   '"Gift your inner circle 100 points, and receive 200 points for every successful bespoke referral."',
                   style: TextStyle(
                     color: AppTheme.mutedForeground,
-                    fontSize: 12.sp,
+                    fontSize: 13.sp,
                     fontStyle: FontStyle.italic,
-                    height: 1.5,
+                    height: 1.6,
                   ),
                   textAlign: TextAlign.center,
                 ),

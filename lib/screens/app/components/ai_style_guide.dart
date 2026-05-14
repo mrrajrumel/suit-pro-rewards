@@ -44,60 +44,62 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
           onTap: () => setState(() => _isOpen = true),
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(28.w),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.zinc[900]!, Colors.black],
+                colors: [Color(0xFF18181B), Colors.black],
               ),
               borderRadius: BorderRadius.circular(40.r),
-              border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
+              border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withOpacity(0.4),
                   blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  offset: const Offset(0, 12),
                 ),
               ],
             ),
             child: Stack(
               children: [
                 Positioned(
-                  right: -10.w,
-                  bottom: -10.h,
+                  right: -15.w,
+                  bottom: -15.h,
                   child: Opacity(
                     opacity: 0.05,
-                    child: Icon(LucideIcons.scissors, size: 80.sp, color: AppTheme.gold),
+                    child: Icon(LucideIcons.scissors, size: 90.sp, color: AppTheme.gold),
                   ),
                 ),
                 Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(14.w),
                       decoration: BoxDecoration(
                         color: AppTheme.gold.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16.r),
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
                       ),
                       child: Icon(LucideIcons.sparkles, color: AppTheme.gold, size: 24.sp),
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 16.h),
                     Text(
                       'SARTORIAL AI CONCIERGE',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
+                        letterSpacing: 2.5,
                       ),
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 6.h),
                     Text(
                       'Instant expert advice on bespoke style & garment care.',
                       style: TextStyle(
                         color: AppTheme.mutedForeground,
-                        fontSize: 10.sp,
+                        fontSize: 11.sp,
                         fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
                     ),

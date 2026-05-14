@@ -48,8 +48,8 @@ class _PointsInfoState extends State<PointsInfo> {
         'icon': LucideIcons.userPlus,
         'title': 'Refer a Friend',
         'description': 'Get ${_settings?['referral_bonus'] ?? 100} points when a new member joins using your code.',
-        'color': Colors.emerald,
-        'bg': Colors.emerald.withOpacity(0.1),
+        'color': Colors.green,
+        'bg': Colors.green.withOpacity(0.1),
       },
       {
         'icon': LucideIcons.logIn,

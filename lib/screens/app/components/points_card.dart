@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:suit_pro_rewards_flutter/providers/user_provider.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 import 'package:suit_pro_rewards_flutter/utils/tier_utils.dart';
@@ -28,7 +29,7 @@ class PointsCard extends ConsumerWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(32.r),
         border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -42,8 +43,8 @@ class PointsCard extends ConsumerWidget {
         boxShadow: [
           BoxShadow(
             color: AppTheme.gold.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
           ),
         ],
       ),
@@ -51,8 +52,8 @@ class PointsCard extends ConsumerWidget {
         children: [
           // Background Watermark Icon
           Positioned(
-            bottom: -40.h,
-            right: -40.w,
+            bottom: -50.h,
+            right: -50.w,
             child: Transform.rotate(
               angle: -0.2,
               child: Icon(
@@ -80,6 +81,7 @@ class PointsCard extends ConsumerWidget {
                           style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: AppTheme.gold,
                             letterSpacing: 2,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                         SizedBox(height: 4.h),
@@ -89,13 +91,18 @@ class PointsCard extends ConsumerWidget {
                           children: [
                             Text(
                               NumberFormat('#,###').format(user.points),
-                              style: Theme.of(context).textTheme.headlineLarge,
+                              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                fontSize: 36.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                            SizedBox(width: 4.w),
+                            SizedBox(width: 6.w),
                             Text(
                               'pts',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppTheme.gold.withOpacity(0.7),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ],
@@ -103,10 +110,10 @@ class PointsCard extends ConsumerWidget {
                       ],
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                       decoration: BoxDecoration(
                         color: tierData.color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(24.r),
                         border: Border.all(color: tierData.color.withOpacity(0.2)),
                       ),
                       child: Row(
@@ -123,9 +130,9 @@ class PointsCard extends ConsumerWidget {
                             user.tier.toUpperCase(),
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               color: tierData.color,
-                              letterSpacing: 1,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ],
@@ -141,12 +148,18 @@ class PointsCard extends ConsumerWidget {
                       user.fullName,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontFamily: GoogleFonts.playfairDisplay().fontFamily,
+                        fontSize: 22.sp,
                       ),
                     ),
                     if (user.phone != null)
-                      Text(
-                        user.phone!,
-                        style: Theme.of(context).textTheme.bodySmall,
+                      Padding(
+                        padding: EdgeInsets.only(top: 4.h),
+                        child: Text(
+                          user.phone!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.mutedForeground.withOpacity(0.6),
+                          ),
+                        ),
                       ),
                   ],
                 ),
@@ -156,25 +169,30 @@ class PointsCard extends ConsumerWidget {
                   children: [
                     Text(
                       '£${NumberFormat('#,###').format(user.totalSpent)} spent',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     if (nextTier != null)
                       Text(
                         'Next: ${nextTier.label} at £${NumberFormat('#,###').format(nextTier.threshold)}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppTheme.gold.withOpacity(0.6),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                   ],
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 12.h),
                 if (nextTier != null)
                   Container(
                     height: 6.h,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: AppTheme.gold.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(3.r),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: FractionallySizedBox(
                       alignment: Alignment.centerLeft,
@@ -184,7 +202,7 @@ class PointsCard extends ConsumerWidget {
                           gradient: const LinearGradient(
                             colors: [AppTheme.goldDark, AppTheme.goldLight],
                           ),
-                          borderRadius: BorderRadius.circular(3.r),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
                       ).animate().shimmer(duration: 2.seconds),
                     ),
@@ -194,6 +212,6 @@ class PointsCard extends ConsumerWidget {
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
   }
 }

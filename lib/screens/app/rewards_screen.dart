@@ -103,32 +103,38 @@ class RewardsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: AppTheme.gold,
         borderRadius: BorderRadius.circular(40.r),
-        boxShadow: [BoxShadow(color: AppTheme.gold.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))],
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.gold.withOpacity(0.2),
+            blurRadius: 25,
+            offset: const Offset(0, 12),
+          )
+        ],
       ),
       child: Stack(
         children: [
           Positioned(
-            right: -20.w,
-            bottom: -20.h,
-            child: Icon(LucideIcons.gift, size: 100.sp, color: Colors.black.withOpacity(0.1)),
+            right: -25.w,
+            bottom: -25.h,
+            child: Icon(LucideIcons.gift, size: 120.sp, color: Colors.black.withOpacity(0.08)),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'YOUR BALANCE',
-                style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 3),
               ),
-              SizedBox(height: 4.h),
+              SizedBox(height: 6.h),
               Text(
-                '$points pts',
-                style: TextStyle(color: Colors.black, fontSize: 32.sp, fontWeight: FontWeight.w900),
+                '$points PTS',
+                style: TextStyle(color: Colors.black, fontSize: 34.sp, fontWeight: FontWeight.w900, letterSpacing: -1),
               ),
             ],
           ),
         ],
       ),
-    ).animate().scale();
+    ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack);
   }
 
   Widget _buildRewardCard(Map<String, dynamic> reward, int index) {
@@ -140,6 +146,13 @@ class RewardsScreen extends ConsumerWidget {
         color: AppTheme.card,
         borderRadius: BorderRadius.circular(32.r),
         border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -148,6 +161,7 @@ class RewardsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(color: color.withOpacity(0.1)),
             ),
             child: Icon(reward['icon'] as IconData, color: color, size: 24.sp),
           ),
@@ -156,25 +170,29 @@ class RewardsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(reward['title'] as String, style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold)),
+                Text(reward['title'] as String, style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w700)),
                 SizedBox(height: 4.h),
-                Text(reward['description'] as String, style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp)),
-                SizedBox(height: 8.h),
+                Text(reward['description'] as String, style: TextStyle(color: AppTheme.mutedForeground, fontSize: 11.sp, height: 1.4)),
+                SizedBox(height: 10.h),
                 Text(
-                  '${reward['points']} pts',
-                  style: TextStyle(color: AppTheme.gold, fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1),
+                  '${reward['points']} PTS',
+                  style: TextStyle(color: AppTheme.gold, fontSize: 11.sp, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                 ),
               ],
             ),
           ),
           Container(
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(color: AppTheme.secondary, borderRadius: BorderRadius.circular(12.r)),
-            child: Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground, size: 16.sp),
+            padding: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              color: AppTheme.secondary, 
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
+            ),
+            child: Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.5), size: 16.sp),
           ),
         ],
       ),
-    ).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }
 
   Widget _buildFooterBox() {

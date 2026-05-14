@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:suit_pro_rewards_flutter/providers/auth_view_model.dart';
-import 'package:suit_pro_rewards_flutter/services/auth_provider.dart';
+import 'package:suit_pro_rewards_flutter/providers/auth_provider.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 import 'package:suit_pro_rewards_flutter/widgets/google_icon.dart';
 import 'package:suit_pro_rewards_flutter/widgets/logo.dart';
@@ -108,28 +109,36 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Glows
+          // Premium Background Glows
           Positioned(
-            top: -100.h,
+            top: -50.h,
             right: -100.w,
             child: Container(
               width: 320.w,
               height: 320.h,
               decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.1),
+                color: AppTheme.gold.withOpacity(0.12),
                 shape: BoxShape.circle,
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                child: Container(color: Colors.transparent),
               ),
             ).animate().fadeIn(duration: 1000.ms),
           ),
           Positioned(
-            bottom: -100.h,
+            bottom: -50.h,
             left: -100.w,
             child: Container(
               width: 320.w,
               height: 320.h,
               decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.05),
+                color: AppTheme.gold.withOpacity(0.06),
                 shape: BoxShape.circle,
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                child: Container(color: Colors.transparent),
               ),
             ).animate().fadeIn(duration: 1200.ms),
           ),
@@ -141,21 +150,22 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 constraints: BoxConstraints(
                   minHeight: 1.sh - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - 48.h,
                 ),
-                child: IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 24.h),
-                      Expanded(
-                        child: AnimatedSwitcher(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(height: 24.h),
+                        AnimatedSwitcher(
                           duration: 400.ms,
                           switchInCurve: Curves.easeOutCubic,
                           switchOutCurve: Curves.easeInCubic,
                           child: _buildCurrentView(),
                         ),
-                      ),
-                      _buildFooter(),
-                    ],
-                  ),
+                      ],
+                    ),
+                    _buildFooter(),
+                  ],
                 ),
               ),
             ),
@@ -182,7 +192,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     return Column(
       key: const ValueKey('landing'),
       children: [
-        const Logo(size: 64).animate().slideY(begin: -0.2, end: 0, duration: 600.ms).fadeIn(),
+        const Logo(size: 64).animate().slideY(begin: -0.2, end: 0, duration: 600.ms, curve: Curves.easeOutBack).fadeIn(),
         SizedBox(height: 48.h),
         Column(
           children: [
@@ -203,7 +213,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                   ),
             ),
           ],
-        ).animate().slideY(begin: 0.1, end: 0, duration: 600.ms).fadeIn(),
+        ).animate().slideY(begin: 0.1, end: 0, duration: 600.ms, curve: Curves.easeOutCubic).fadeIn(),
         SizedBox(height: 16.h),
         Text(
           'Connect with Suit Pro, collect points, and enjoy member rewards.',
@@ -211,7 +221,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 height: 1.6,
                 color: Colors.white.withOpacity(0.5),
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
         ).animate().fadeIn(delay: 200.ms),
         SizedBox(height: 48.h),
@@ -219,7 +229,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
         SizedBox(height: 48.h),
         _buildLandingButtons(),
       ],
-    );
+    ).animate().scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), duration: 600.ms, curve: Curves.easeOutCubic).fadeIn();
   }
 
   Widget _buildFeatureGrid() {
@@ -230,49 +240,70 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
       {'icon': LucideIcons.zap, 'label': 'Bonus'},
     ];
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12.w,
-        mainAxisSpacing: 12.h,
-        childAspectRatio: 1.8,
-      ),
-      itemCount: features.length,
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(24.r),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(features[index]['icon'] as IconData,
-                  color: AppTheme.gold, size: 20.sp),
-              SizedBox(height: 8.h),
-              Text(
-                (features[index]['label'] as String).toUpperCase(),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontSize: 10.sp,
-                      color: Colors.white.withOpacity(0.4),
-                      fontWeight: FontWeight.w900,
-                    ),
-              ),
-            ],
-          ),
-        ).animate().scale(delay: (index * 100).ms, duration: 400.ms);
-      },
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: _buildFeatureItem(features[0], 0)),
+            SizedBox(width: 12.w),
+            Expanded(child: _buildFeatureItem(features[1], 1)),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        Row(
+          children: [
+            Expanded(child: _buildFeatureItem(features[2], 2)),
+            SizedBox(width: 12.w),
+            Expanded(child: _buildFeatureItem(features[3], 3)),
+          ],
+        ),
+      ],
     );
+  }
+
+  Widget _buildFeatureItem(Map<String, dynamic> feature, int index) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(feature['icon'] as IconData, color: AppTheme.gold, size: 20.sp),
+          SizedBox(height: 8.h),
+          Text(
+            (feature['label'] as String).toUpperCase(),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: 9.sp,
+                  color: Colors.white.withOpacity(0.4),
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                ),
+          ),
+        ],
+      ),
+    ).animate().scale(delay: (index * 100).ms, duration: 400.ms, curve: Curves.easeOutBack);
   }
 
   Widget _buildLandingButtons() {
     return Column(
       children: [
-        SizedBox(
+        Container(
           width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
           child: ElevatedButton(
             onPressed: () {
               // TODO: Google Sign In
@@ -296,7 +327,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             ),
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 16.h),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
@@ -304,16 +335,17 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             icon: Icon(LucideIcons.phone, size: 14.sp, color: AppTheme.gold),
             label: Text(
               'SIGN IN WITH PHONE',
-              style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1),
+              style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 2),
             ),
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 16.h),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
               side: BorderSide(color: Colors.white.withOpacity(0.1)),
+              backgroundColor: Colors.white.withOpacity(0.04),
             ),
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 16.h),
         Row(
           children: [
             Expanded(
@@ -322,12 +354,12 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 icon: Icon(LucideIcons.logIn, size: 12.sp),
                 label: Text(
                   'LOG IN',
-                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900),
+                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 18.h),
-                  backgroundColor: AppTheme.gold.withOpacity(0.1),
-                  side: BorderSide(color: AppTheme.gold.withOpacity(0.2)),
+                  backgroundColor: AppTheme.gold.withOpacity(0.08),
+                  side: BorderSide(color: AppTheme.gold.withOpacity(0.15)),
                   foregroundColor: AppTheme.gold,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
                 ),
@@ -340,11 +372,11 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 icon: Icon(LucideIcons.userPlus, size: 12.sp),
                 label: Text(
                   'SIGN UP',
-                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900),
+                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 18.h),
-                  backgroundColor: Colors.white.withOpacity(0.05),
+                  backgroundColor: Colors.white.withOpacity(0.04),
                   side: BorderSide(color: Colors.white.withOpacity(0.1)),
                   foregroundColor: Colors.white.withOpacity(0.8),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
@@ -353,7 +385,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             ),
           ],
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 16.h),
         SizedBox(
           width: double.infinity,
           child: TextButton.icon(
@@ -369,7 +401,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           ),
         ),
       ],
-    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }
 
   Widget _buildPhoneAuthView() {

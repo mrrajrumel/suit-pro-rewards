@@ -98,8 +98,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
             ),
             child: Icon(LucideIcons.refreshCw, color: AppTheme.gold, size: 16.sp)
-                .animate(target: _isRefreshing ? 1 : 0)
-                .rotate(duration: 1.seconds, iterations: -1),
+                .animate(target: _isRefreshing ? 1 : 0, onPlay: (controller) => controller.repeat())
+                .rotate(duration: 1.seconds),
           ),
         ),
       ],
@@ -142,8 +142,15 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: AppTheme.card,
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(32.r),
         border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,22 +163,22 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 label,
                 style: TextStyle(
                   color: color.withOpacity(0.6),
-                  fontSize: 8.sp,
+                  fontSize: 8.5.sp,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
+                  letterSpacing: 1.2,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 12.h),
           RichText(
             text: TextSpan(
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20.sp),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 22.sp, fontWeight: FontWeight.w700),
               children: [
                 TextSpan(text: value),
                 TextSpan(
-                  text: ' pts',
-                  style: TextStyle(fontSize: 10.sp, color: Colors.white24),
+                  text: ' PTS',
+                  style: TextStyle(fontSize: 10.sp, color: Colors.white.withOpacity(0.2), fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -269,10 +276,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: isPositive ? AppTheme.gold.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+              color: !isPositive ? Colors.redAccent.withOpacity(0.1) : AppTheme.gold.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16.r),
             ),
-            child: Icon(LucideIcons.trophy, color: isPositive ? AppTheme.gold : Colors.redAccent, size: 16.sp),
+            child: Icon(LucideIcons.trophy, color: !isPositive ? Colors.redAccent : AppTheme.gold, size: 16.sp),
           ),
           SizedBox(width: 16.w),
           Expanded(
@@ -281,16 +288,16 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               children: [
                 Text(
                   activity.description,
-                  style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.white, fontSize: 13.sp, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  activity.createdAt != null ? timeago.format(activity.createdAt!) : 'Just now',
+                  (activity.createdAt != null ? timeago.format(activity.createdAt!) : 'Just now').toUpperCase(),
                   style: TextStyle(
-                    color: AppTheme.mutedForeground,
+                    color: AppTheme.mutedForeground.withOpacity(0.6),
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 1,
+                    letterSpacing: 1.5,
                   ),
                 ),
               ],
@@ -303,23 +310,25 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 '${isPositive ? '+' : '-'}${activity.points}',
                 style: TextStyle(
                   color: isPositive ? AppTheme.gold : Colors.white,
-                  fontSize: 14.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
                 ),
               ),
               Text(
                 'PTS',
                 style: TextStyle(
-                  color: AppTheme.mutedForeground.withOpacity(0.3),
+                  color: AppTheme.mutedForeground.withOpacity(0.2),
                   fontSize: 8.sp,
                   fontWeight: FontWeight.w900,
+                  fontFamily: 'monospace',
                 ),
               ),
             ],
           ),
         ],
       ),
-    ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }
 
   Widget _buildQRClaimButton() {
@@ -329,7 +338,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         padding: EdgeInsets.all(24.w),
         decoration: BoxDecoration(
           color: AppTheme.secondary.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(32.r),
+          borderRadius: BorderRadius.circular(40.r),
           border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
         ),
         child: Row(
@@ -340,31 +349,31 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 color: AppTheme.gold.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(16.r),
               ),
-              child: Icon(LucideIcons.qrCode, color: AppTheme.gold, size: 20.sp),
+              child: Icon(LucideIcons.qrCode, color: AppTheme.gold, size: 22.sp),
             ),
-            SizedBox(width: 16.w),
+            SizedBox(width: 20.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Claim with QR Code',
-                    style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w700),
                   ),
                   SizedBox(height: 4.h),
                   Text(
                     'SCAN YOUR SUITPRO RECEIPT',
                     style: TextStyle(
-                      color: AppTheme.mutedForeground,
+                      color: AppTheme.mutedForeground.withOpacity(0.6),
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 1,
+                      letterSpacing: 1.5,
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.3), size: 16.sp),
+            Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.2), size: 16.sp),
           ],
         ),
       ),

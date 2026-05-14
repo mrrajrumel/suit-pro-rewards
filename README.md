@@ -150,12 +150,24 @@ Here is a breakdown of the key UI files and the features they handle:
 
 ## 🔧 Useful Commands
 
+### Flutter Development
 | Command | Purpose |
 | :--- | :--- |
+| `flutter pub get` | Install project dependencies |
 | `flutter analyze` | Check for code errors and warnings |
 | `dart format .` | Format all files according to Dart guidelines |
 | `flutter clean` | Clear build cache (useful for fixing build errors) |
 | `flutter doctor` | Check your Flutter environment status |
+| `flutter upgrade` | Upgrade Flutter SDK |
+
+### Android Native (Gradle)
+Run these commands from the `android/` directory:
+| Command | Purpose |
+| :--- | :--- |
+| `./gradlew clean` | Clean the Android build cache |
+| `./gradlew assembleRelease` | Build the release APK |
+| `./gradlew bundleRelease` | Build the release App Bundle |
+| `./gradlew signRelease` | Sign the release build (requires config) |
 
 ---
 

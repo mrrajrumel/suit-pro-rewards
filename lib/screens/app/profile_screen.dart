@@ -137,12 +137,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return GestureDetector(
       onTap: () => setState(() => _showQR = true),
       child: Container(
-        padding: EdgeInsets.all(24.w),
+        padding: EdgeInsets.all(28.w),
         decoration: BoxDecoration(
           color: AppTheme.card,
           borderRadius: BorderRadius.circular(40.r),
-          border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))],
+          border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
+          boxShadow: AppTheme.premiumShadow,
         ),
         child: Row(
           children: [
@@ -151,18 +151,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               decoration: BoxDecoration(color: AppTheme.gold.withOpacity(0.1), borderRadius: BorderRadius.circular(16.r)),
               child: Icon(LucideIcons.qrCode, color: AppTheme.gold, size: 24.sp),
             ),
-            SizedBox(width: 16.w),
+            SizedBox(width: 20.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Digital ID Card', style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold)),
+                  Text('Digital ID Card', style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.w700)),
                   SizedBox(height: 4.h),
-                  Text('SHOW IN-STORE TO EARN POINTS', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                  Text('SHOW IN-STORE TO EARN POINTS', style: TextStyle(color: AppTheme.mutedForeground.withOpacity(0.6), fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
                 ],
               ),
             ),
-            Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.3), size: 16.sp),
+            Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.2), size: 16.sp),
           ],
         ),
       ),
@@ -282,7 +282,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       children: [
         _buildSettingsItem(LucideIcons.bell, 'Notifications', 'Alerts are on', Colors.blue),
         SizedBox(height: 12.h),
-        _buildSettingsItem(LucideIcons.shield, 'Privacy & Security', 'Securely Encrypted', Colors.emerald),
+        _buildSettingsItem(LucideIcons.shield, 'Privacy & Security', 'Securely Encrypted', Colors.green),
       ],
     );
   }

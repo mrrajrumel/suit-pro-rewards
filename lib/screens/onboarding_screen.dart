@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -96,15 +97,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       backgroundColor: AppTheme.background,
       body: Stack(
         children: [
+          // Background Glow
           Positioned(
-            top: 0,
-            right: 0,
+            top: -50.h,
+            right: -50.w,
             child: Container(
               width: 250.w,
               height: 250.h,
               decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.1),
+                color: AppTheme.gold.withOpacity(0.12),
                 shape: BoxShape.circle,
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                child: Container(color: Colors.transparent),
               ),
             ).animate().fadeIn(duration: 1000.ms),
           ),
@@ -115,6 +121,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 children: [
                   Expanded(
                     child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
                         children: [
                           SizedBox(height: 40.h),
@@ -128,10 +135,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ),
                               child: const Logo(size: 48),
                             ),
-                          ).animate().scale(),
+                          ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
                           SizedBox(height: 48.h),
                           AnimatedSwitcher(
                             duration: 400.ms,
+                            switchInCurve: Curves.easeOutCubic,
+                            switchOutCurve: Curves.easeInCubic,
                             child: _buildStep(),
                           ),
                         ],
@@ -263,11 +272,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Container(
           padding: EdgeInsets.all(24.w),
           decoration: BoxDecoration(
-            color: Colors.emerald.withOpacity(0.1),
+            color: Colors.green.withOpacity(0.1),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.emerald.withOpacity(0.2)),
+            border: Border.all(color: Colors.green.withOpacity(0.2)),
           ),
-          child: Icon(LucideIcons.star, color: Colors.emerald, size: 48.sp),
+          child: Icon(LucideIcons.star, color: Colors.green, size: 48.sp),
         ),
         SizedBox(height: 24.h),
         Text.rich(
@@ -294,19 +303,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           padding: EdgeInsets.all(24.w),
           decoration: BoxDecoration(
             color: AppTheme.card,
-            borderRadius: BorderRadius.circular(24.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+            borderRadius: BorderRadius.circular(32.r),
+            border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'WELCOME REWARD',
-                style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp, fontWeight: FontWeight.bold, letterSpacing: 1),
+                style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 2),
               ),
               Text(
                 '+50 Points',
-                style: TextStyle(color: Colors.emerald, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.green, fontSize: 14.sp, fontWeight: FontWeight.w900),
               ),
             ],
           ),
@@ -382,14 +391,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget _buildButtons() {
     return Column(
       children: [
-        SizedBox(
+        Container(
           width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: AppTheme.buttonShadow,
+          ),
           child: ElevatedButton(
             onPressed: _isSubmitting ? null : () => _step < 3 ? setState(() => _step++) : _submit(),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(_isSubmitting ? 'STARTING...' : (_step == 3 ? 'START EARNING POINTS' : 'CONTINUE')),
+                Text(
+                  (_isSubmitting ? 'STARTING...' : (_step == 3 ? 'START EARNING POINTS' : 'CONTINUE')).toUpperCase(),
+                  style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.w900, fontSize: 12.sp),
+                ),
                 if (!_isSubmitting) ...[
                   SizedBox(width: 8.w),
                   Icon(LucideIcons.arrowRight, size: 16.sp),

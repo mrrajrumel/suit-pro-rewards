@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTheme {
   static const Color gold = Color(0xFFD4AF37);
@@ -18,6 +19,23 @@ class AppTheme {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
+
+  static List<BoxShadow> get premiumShadow => [
+        BoxShadow(
+          color: gold.withOpacity(0.1),
+          blurRadius: 30,
+          offset: const Offset(0, 15),
+          spreadRadius: -5,
+        ),
+      ];
+
+  static List<BoxShadow> get buttonShadow => [
+        BoxShadow(
+          color: gold.withOpacity(0.2),
+          blurRadius: 20,
+          offset: const Offset(0, 10),
+        ),
+      ];
 
   static ThemeData get darkTheme {
     return ThemeData(
@@ -40,7 +58,7 @@ class AppTheme {
           fontSize: 36.sp,
           fontWeight: FontWeight.w700,
           color: foreground,
-          letterSpacing: -1,
+          letterSpacing: -0.5,
         ),
         headlineMedium: GoogleFonts.playfairDisplay(
           fontSize: 28.sp,
@@ -64,13 +82,14 @@ class AppTheme {
         ),
         titleSmall: GoogleFonts.inter(
           fontSize: 14.sp,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w900,
           color: gold,
-          letterSpacing: 2,
+          letterSpacing: 1.5,
         ),
         bodyLarge: GoogleFonts.inter(
           fontSize: 16.sp,
           color: foreground,
+          fontWeight: FontWeight.w500,
         ),
         bodyMedium: GoogleFonts.inter(
           fontSize: 14.sp,
@@ -85,7 +104,7 @@ class AppTheme {
           fontSize: 10.sp,
           fontWeight: FontWeight.w900,
           color: mutedForeground,
-          letterSpacing: 3,
+          letterSpacing: 2.5,
         ),
       ),
 
@@ -93,14 +112,13 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: gold,
           foregroundColor: Colors.black,
-          elevation: 10,
-          shadowColor: gold.withOpacity(0.3),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-          padding: EdgeInsets.symmetric(vertical: 20.h),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+          padding: EdgeInsets.symmetric(vertical: 18.h),
           textStyle: GoogleFonts.inter(
-            fontSize: 10.sp,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w900,
-            letterSpacing: 2,
+            letterSpacing: 1.5,
           ),
         ),
       ),

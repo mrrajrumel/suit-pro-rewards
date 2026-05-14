@@ -83,12 +83,12 @@ class LifestyleConcierge extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppTheme.card,
                   borderRadius: BorderRadius.circular(40.r),
-                  border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+                  border: Border.all(color: AppTheme.gold.withOpacity(0.12)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withOpacity(0.25),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
@@ -117,11 +117,11 @@ class LifestyleConcierge extends StatelessWidget {
                               height: 64.h,
                               decoration: BoxDecoration(
                                 color: AppTheme.secondary,
-                                borderRadius: BorderRadius.circular(16.r),
-                                border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(color: AppTheme.gold.withOpacity(0.08)),
                               ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.r),
+                                borderRadius: BorderRadius.circular(20.r),
                                 child: product['image'] != null
                                     ? Image.network(product['image'], fit: BoxFit.cover)
                                     : Icon(LucideIcons.package, color: AppTheme.gold.withOpacity(0.2)),
@@ -131,10 +131,10 @@ class LifestyleConcierge extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                                   decoration: BoxDecoration(
                                     color: AppTheme.gold.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderRadius: BorderRadius.circular(12.r),
                                     border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
                                   ),
                                   child: Text(
@@ -143,16 +143,16 @@ class LifestyleConcierge extends StatelessWidget {
                                       color: AppTheme.gold,
                                       fontSize: 8.sp,
                                       fontWeight: FontWeight.w900,
-                                      letterSpacing: 1,
+                                      letterSpacing: 1.5,
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 4.h),
+                                SizedBox(height: 6.h),
                                 Text(
                                   '£${product['price']}',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 14.sp,
+                                    fontSize: 15.sp,
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),
@@ -163,9 +163,13 @@ class LifestyleConcierge extends StatelessWidget {
                         const Spacer(),
                         Text(
                           product['name'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                 color: Colors.white,
                                 fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0,
                               ),
                         ),
                         SizedBox(height: 8.h),
@@ -181,18 +185,20 @@ class LifestyleConcierge extends StatelessWidget {
                                   style: TextStyle(
                                     color: AppTheme.gold,
                                     fontSize: 9.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.2,
                                   ),
                                 ),
                               ],
                             ),
                             Container(
-                              padding: EdgeInsets.all(4.w),
+                              padding: EdgeInsets.all(6.w),
                               decoration: BoxDecoration(
                                 color: AppTheme.secondary,
-                                borderRadius: BorderRadius.circular(8.r),
+                                borderRadius: BorderRadius.circular(10.r),
+                                border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
                               ),
-                              child: Icon(LucideIcons.arrowRight, size: 16.sp, color: AppTheme.mutedForeground),
+                              child: Icon(LucideIcons.arrowRight, size: 14.sp, color: AppTheme.mutedForeground),
                             ),
                           ],
                         ),
@@ -200,7 +206,7 @@ class LifestyleConcierge extends StatelessWidget {
                     ),
                   ],
                 ),
-              ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.1, end: 0);
+              ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
             },
           ),
         ),
