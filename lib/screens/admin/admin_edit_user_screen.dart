@@ -10,7 +10,7 @@ class AdminEditUserScreen extends ConsumerStatefulWidget {
   const AdminEditUserScreen({super.key, required this.user});
 
   @override
-  _AdminEditUserScreenState createState() => _AdminEditUserScreenState();
+  ConsumerState<AdminEditUserScreen> createState() => _AdminEditUserScreenState();
 }
 
 class _AdminEditUserScreenState extends ConsumerState<AdminEditUserScreen> {
@@ -28,11 +28,11 @@ class _AdminEditUserScreenState extends ConsumerState<AdminEditUserScreen> {
     showDialog(
       context: context,
       builder: (ctx) {
-        final _pointsController = TextEditingController();
+        final pointsController = TextEditingController();
         return AlertDialog(
           title: const Text('Add Points'),
           content: TextField(
-            controller: _pointsController,
+            controller: pointsController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: const InputDecoration(labelText: 'Points to Add'),
@@ -45,7 +45,7 @@ class _AdminEditUserScreenState extends ConsumerState<AdminEditUserScreen> {
             TextButton(
               child: const Text('Add'),
               onPressed: () {
-                final amount = int.tryParse(_pointsController.text);
+                final amount = int.tryParse(pointsController.text);
                 if (amount != null) {
                   ref.read(userEditViewModelProvider(widget.user.uid).notifier).addPoints(amount);
                   Navigator.of(ctx).pop();
@@ -92,7 +92,7 @@ class _AdminEditUserScreenState extends ConsumerState<AdminEditUserScreen> {
             ),
             const Divider(height: 40),
             DropdownButtonFormField<String>(
-              value: _selectedRole,
+              initialValue: _selectedRole,
               items: _roles.map((String role) {
                 return DropdownMenuItem<String>(
                   value: role,

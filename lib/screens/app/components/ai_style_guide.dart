@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
+import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class AIStyleGuide extends StatefulWidget {
@@ -42,25 +43,18 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
       children: [
         GestureDetector(
           onTap: () => setState(() => _isOpen = true),
-          child: Container(
+          child: GlassContainer(
             width: double.infinity,
-            padding: EdgeInsets.all(28.w),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF18181B), Colors.black],
-              ),
-              borderRadius: BorderRadius.circular(40.r),
-              border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.4),
-                  blurRadius: 20,
-                  offset: const Offset(0, 12),
-                ),
-              ],
+            borderRadius: 40,
+            opacity: 0.1,
+            blur: 20,
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF18181B), Colors.black],
             ),
+            padding: EdgeInsets.all(28.w),
+            border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
             child: Stack(
               children: [
                 Positioned(
@@ -76,9 +70,9 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
                     Container(
                       padding: EdgeInsets.all(14.w),
                       decoration: BoxDecoration(
-                        color: AppTheme.gold.withOpacity(0.1),
+                        color: AppTheme.gold.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+                        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
                       ),
                       child: Icon(LucideIcons.sparkles, color: AppTheme.gold, size: 24.sp),
                     ),
@@ -115,148 +109,156 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
   }
 
   Widget _buildModal() {
-    return Scaffold(
+    final modal = Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        color: AppTheme.background.withOpacity(0.95),
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(24.w),
-        child: Container(
-          width: double.infinity,
-          constraints: BoxConstraints(maxWidth: 400.w),
-          decoration: BoxDecoration(
-            color: AppTheme.card,
-            borderRadius: BorderRadius.circular(48.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.3)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
+      body: Stack(
+        children: [
+          // Background Backdrop
+          Animate(
+            child: GestureDetector(
+              onTap: () => setState(() => _isOpen = false),
+              child: Container(
+                color: AppTheme.background.withValues(alpha: 0.8),
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.all(32.w),
-                decoration: BoxDecoration(
-                  color: AppTheme.gold.withOpacity(0.1),
-                  border: Border(bottom: BorderSide(color: AppTheme.gold.withOpacity(0.1))),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(48.r)),
-                ),
-                child: Stack(
+            ),
+          ).fadeIn(),
+
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(24.w),
+              child: GlassContainer(
+                width: double.infinity,
+                borderRadius: 48,
+                opacity: 0.2,
+                blur: 30,
+                padding: EdgeInsets.zero,
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.3)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: GestureDetector(
-                        onTap: () => setState(() => _isOpen = false),
-                        child: Icon(LucideIcons.x, color: AppTheme.mutedForeground, size: 20.sp),
+                    Container(
+                      padding: EdgeInsets.all(32.w),
+                      decoration: BoxDecoration(
+                        color: AppTheme.gold.withValues(alpha: 0.1),
+                        border: Border(bottom: BorderSide(color: AppTheme.gold.withValues(alpha: 0.1))),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(48.r)),
+                      ),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: GestureDetector(
+                              onTap: () => setState(() => _isOpen = false),
+                              child: Icon(LucideIcons.x, color: AppTheme.mutedForeground, size: 20.sp),
+                            ),
+                          ),
+                          Center(
+                            child: Column(
+                              children: [
+                                Icon(LucideIcons.sparkles, color: AppTheme.gold, size: 40.sp),
+                                SizedBox(height: 16.h),
+                                Text('Style Concierge', style: Theme.of(context).textTheme.headlineSmall),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Center(
+                    Padding(
+                      padding: EdgeInsets.all(32.w),
                       child: Column(
                         children: [
-                          Icon(LucideIcons.sparkles, color: AppTheme.gold, size: 40.sp),
-                          SizedBox(height: 16.h),
-                          Text('Style Concierge', style: Theme.of(context).textTheme.headlineSmall),
+                          Container(
+                            constraints: BoxConstraints(minHeight: 150.h, maxHeight: 300.h),
+                            child: SingleChildScrollView(
+                              child: _response.isNotEmpty
+                                  ? Column(
+                                      children: [
+                                        Text(
+                                          _response,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12.sp,
+                                            fontStyle: FontStyle.italic,
+                                            height: 1.6,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(height: 24.h),
+                                        Divider(color: AppTheme.gold.withValues(alpha: 0.05)),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            _buildBadge(LucideIcons.shieldCheck, 'Certified Advice'),
+                                            SizedBox(width: 16.w),
+                                            _buildBadge(LucideIcons.heart, 'Patron Care'),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  : Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 40.h),
+                                        child: Text(
+                                          '"Welcome, patron. How may I assist with your sartorial queries today? Ask me about suit pairings, fabric maintenance, or evening wear etiquette."',
+                                          style: TextStyle(
+                                            color: AppTheme.mutedForeground,
+                                            fontSize: 12.sp,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          SizedBox(height: 24.h),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _queryController,
+                                  style: TextStyle(fontSize: 12.sp, color: Colors.white),
+                                  decoration: InputDecoration(
+                                    hintText: 'e.g. How to store wool suits?',
+                                    hintStyle: TextStyle(color: Colors.white24, fontSize: 12.sp),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              GestureDetector(
+                                onTap: _getAdvice,
+                                child: Container(
+                                  padding: EdgeInsets.all(12.w),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.gold,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: _isLoading
+                                      ? SizedBox(
+                                          width: 16.w,
+                                          height: 16.h,
+                                          child: const CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
+                                        )
+                                      : Icon(LucideIcons.send, color: Colors.black, size: 16.sp),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(32.w),
-                child: Column(
-                  children: [
-                    Container(
-                      constraints: BoxConstraints(minHeight: 150.h, maxHeight: 300.h),
-                      child: SingleChildScrollView(
-                        child: _response.isNotEmpty
-                            ? Column(
-                                children: [
-                                  Text(
-                                    _response,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12.sp,
-                                      fontStyle: FontStyle.italic,
-                                      height: 1.6,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(height: 24.h),
-                                  Divider(color: AppTheme.gold.withOpacity(0.05)),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      _buildBadge(LucideIcons.shieldCheck, 'Certified Advice'),
-                                      SizedBox(width: 16.w),
-                                      _buildBadge(LucideIcons.heart, 'Patron Care'),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : Center(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 40.h),
-                                  child: Text(
-                                    '"Welcome, patron. How may I assist with your sartorial queries today? Ask me about suit pairings, fabric maintenance, or evening wear etiquette."',
-                                    style: TextStyle(
-                                      color: AppTheme.mutedForeground,
-                                      fontSize: 12.sp,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                      ),
-                    ),
-                    SizedBox(height: 24.h),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _queryController,
-                            style: TextStyle(fontSize: 12.sp, color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: 'e.g. How to store wool suits?',
-                              hintStyle: TextStyle(color: Colors.white24, fontSize: 12.sp),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        GestureDetector(
-                          onTap: _getAdvice,
-                          child: Container(
-                            padding: EdgeInsets.all(12.w),
-                            decoration: BoxDecoration(
-                              color: AppTheme.gold,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: _isLoading
-                                ? SizedBox(
-                                    width: 16.w,
-                                    height: 16.h,
-                                    child: const CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
-                                  )
-                                : Icon(LucideIcons.send, color: Colors.black, size: 16.sp),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
-    ).animate().fadeIn();
+    );
+
+    return Animate(child: modal).fadeIn(duration: 300.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), curve: Curves.easeOutBack);
   }
 
   Widget _buildBadge(IconData icon, String label) {

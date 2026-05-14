@@ -9,22 +9,26 @@ class DashboardState {
   final AsyncValue<List<Activity>> activities;
   final AsyncValue<List<FlashSale>> flashSales;
   final AsyncValue<WebStats> webStats;
+  final AsyncValue<List<dynamic>> products;
 
   DashboardState({
     this.activities = const AsyncValue.loading(),
     this.flashSales = const AsyncValue.loading(),
     this.webStats = const AsyncValue.loading(),
+    this.products = const AsyncValue.loading(),
   });
 
   DashboardState copyWith({
     AsyncValue<List<Activity>>? activities,
     AsyncValue<List<FlashSale>>? flashSales,
     AsyncValue<WebStats>? webStats,
+    AsyncValue<List<dynamic>>? products,
   }) {
     return DashboardState(
       activities: activities ?? this.activities,
       flashSales: flashSales ?? this.flashSales,
       webStats: webStats ?? this.webStats,
+      products: products ?? this.products,
     );
   }
 }
@@ -48,8 +52,12 @@ class DashboardViewModel extends StateNotifier<DashboardState> {
     _dashboardRepository.getFlashSales().then((flashSales) {
       state = state.copyWith(flashSales: AsyncValue.data(flashSales));
     });
+    _dashboardRepository.getProducts().listen((products) {
+      state = state.copyWith(products: AsyncValue.data(products));
+    });
   }
 }
+
 
 final dashboardViewModelProvider =
     StateNotifierProvider<DashboardViewModel, DashboardState>((ref) {

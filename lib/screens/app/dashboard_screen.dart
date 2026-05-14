@@ -14,6 +14,10 @@ import 'package:suit_pro_rewards_flutter/screens/app/components/ai_style_guide.d
 import 'package:suit_pro_rewards_flutter/screens/app/components/points_info.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import 'package:suit_pro_rewards_flutter/widgets/shimmer_loading.dart';
+import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
+
+
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
@@ -40,61 +44,80 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     return Scaffold(
       backgroundColor: AppTheme.background,
-      body: userAsync.when(
-        data: (user) {
-          if (user == null) return const Center(child: Text('User not found'));
-
-          return RefreshIndicator(
-            onRefresh: _handleRefresh,
-            color: AppTheme.gold,
-            backgroundColor: AppTheme.card,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 56.h),
-                  _buildHeader(),
-                  SizedBox(height: 32.h),
-                  _buildGreeting(user.fullName, user.tier),
-                  SizedBox(height: 32.h),
-                  LifestyleConcierge(tier: user.tier, products: dashboardState.products.asData?.value ?? []),
-                  SizedBox(height: 32.h),
-                  const AIStyleGuide(),
-                  if (dashboardState.flashSales.asData?.value.isNotEmpty ?? false) ...[
-                    SizedBox(height: 32.h),
-                    _buildFlashSales(dashboardState.flashSales),
-                  ],
-                  SizedBox(height: 32.h),
-                  _buildTierProgress(user.tier),
-                  SizedBox(height: 32.h),
-                  const PointsCard(),
-                  SizedBox(height: 32.h),
-                  _buildConnectBanner(),
-                  SizedBox(height: 32.h),
-                  _buildQuickActions(),
-                  SizedBox(height: 32.h),
-                  _buildConnectWithUs(),
-                  SizedBox(height: 32.h),
-                  _buildShareExperience(),
-                  SizedBox(height: 32.h),
-                  _buildConciergeServices(),
-                  SizedBox(height: 32.h),
-                  _buildActivityHistory(dashboardState.activities),
-                  SizedBox(height: 32.h),
-                  const PointsInfo(),
-                  SizedBox(height: 120.h),
-                ],
+      body: Stack(
+        children: [
+          // Background Decorative Elements
+          Positioned(
+            top: -100.h,
+            right: -100.w,
+            child: Container(
+              width: 300.w,
+              height: 300.h,
+              decoration: BoxDecoration(
+                color: AppTheme.gold.withValues(alpha: 0.05),
+                shape: BoxShape.circle,
               ),
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.gold)),
-        error: (e, st) => Center(child: Text('Error: $e')),
+            ).animate().fadeIn(duration: 1.seconds).scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
+          ),
+          
+          userAsync.when(
+            data: (user) {
+              if (user == null) return const Center(child: Text('User not found'));
+
+              return RefreshIndicator(
+                onRefresh: _handleRefresh,
+                color: AppTheme.gold,
+                backgroundColor: AppTheme.card,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 56.h),
+                      _buildHeader(),
+                      SizedBox(height: 32.h),
+                      _buildGreeting(user.fullName, user.tier),
+                      SizedBox(height: 32.h),
+                      LifestyleConcierge(tier: user.tier, products: dashboardState.products.value ?? []),
+                      SizedBox(height: 32.h),
+                      const AIStyleGuide(),
+                      if (dashboardState.flashSales.asData?.value.isNotEmpty ?? false) ...[
+                        SizedBox(height: 32.h),
+                        _buildFlashSales(dashboardState.flashSales),
+                      ],
+                      SizedBox(height: 32.h),
+                      _buildTierProgress(user.tier),
+                      SizedBox(height: 32.h),
+                      const PointsCard(),
+                      SizedBox(height: 32.h),
+                      _buildConnectBanner(),
+                      SizedBox(height: 32.h),
+                      _buildQuickActions(),
+                      SizedBox(height: 32.h),
+                      _buildConnectWithUs(),
+                      SizedBox(height: 32.h),
+                      _buildShareExperience(),
+                      SizedBox(height: 32.h),
+                      _buildConciergeServices(),
+                      SizedBox(height: 32.h),
+                      _buildActivityHistory(dashboardState.activities),
+                      SizedBox(height: 32.h),
+                      const PointsInfo(),
+                      SizedBox(height: 120.h),
+                    ],
+                  ),
+                ),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.gold)),
+            error: (e, st) => Center(child: Text('Error: $e')),
+          ),
+        ],
       ),
     );
   }
+
 
   Widget _buildHeader() {
     return Row(
@@ -143,7 +166,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         decoration: BoxDecoration(
           color: AppTheme.card,
           shape: BoxShape.circle,
-          border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+          border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
         ),
         child: Icon(icon, color: AppTheme.gold, size: 16.sp)
             .animate(target: isRotating ? 1 : 0, onPlay: (controller) => controller.repeat())
@@ -173,7 +196,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           children: [
             Text('$tier Tier Status', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 13.sp, fontWeight: FontWeight.w500)),
             SizedBox(width: 8.w),
-            Container(width: 4.w, height: 4.h, decoration: BoxDecoration(color: AppTheme.gold.withOpacity(0.3), shape: BoxShape.circle)),
+            Container(width: 4.w, height: 4.h, decoration: BoxDecoration(color: AppTheme.gold.withValues(alpha: 0.3), shape: BoxShape.circle)),
             SizedBox(width: 8.w),
             Text('Exclusive Benefits Active', style: TextStyle(color: AppTheme.gold, fontSize: 13.sp, fontWeight: FontWeight.w700)),
           ],
@@ -194,17 +217,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(LucideIcons.zap, color: AppTheme.gold, size: 16.sp, fill: AppTheme.gold.value.toDouble()),
+                    Icon(LucideIcons.zap, color: AppTheme.gold, size: 16.sp, fill: 1.0),
                     SizedBox(width: 8.w),
-                    Text('FLASH SALES', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white, letterSpacing: 2)),
+                    Text('FLASH SALES',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Colors.white,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.w900,
+                            )),
                   ],
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: AppTheme.gold.withOpacity(0.05),
+                    color: AppTheme.gold.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(4.r),
-                    border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+                    border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
                   ),
                   child: Text('LIMITED TIME', style: TextStyle(color: AppTheme.gold, fontSize: 8.sp, fontWeight: FontWeight.bold)),
                 ),
@@ -212,45 +240,46 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
             SizedBox(height: 16.h),
             SizedBox(
-              height: 120.h,
+              height: 130.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: sales.length,
                 itemBuilder: (context, index) {
                   final sale = sales[index];
-                  return Container(
+                  return GlassContainer(
                     width: 240.w,
-                    margin: EdgeInsets.only(right: 16.w),
-                    padding: EdgeInsets.all(20.w),
-                    decoration: BoxDecoration(
-                      color: AppTheme.card,
-                      borderRadius: BorderRadius.circular(32.r),
-                      border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          right: -20.w,
-                          bottom: -20.h,
-                          child: Icon(LucideIcons.zap, size: 80.sp, color: AppTheme.gold.withOpacity(0.05)),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(sale.name.toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                            SizedBox(height: 4.h),
-                            Text('Up to ${sale.discountPercentage}% OFF', style: TextStyle(color: AppTheme.gold, fontSize: 10.sp, fontWeight: FontWeight.bold)),
-                            const Spacer(),
-                            Row(
-                              children: [
-                                Text('SHOP NOW', style: TextStyle(color: Colors.white, fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                                SizedBox(width: 4.w),
-                                Icon(LucideIcons.chevronRight, size: 10.sp, color: Colors.white),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                    borderRadius: 32,
+                    opacity: 0.08,
+                    blur: 10,
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                      margin: EdgeInsets.only(right: 16.w),
+                      padding: EdgeInsets.all(20.w),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            right: -20.w,
+                            bottom: -20.h,
+                            child: Icon(LucideIcons.zap, size: 80.sp, color: AppTheme.gold.withValues(alpha: 0.05)),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(sale.name.toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                              SizedBox(height: 4.h),
+                              Text('Up to ${sale.discountPercentage}% OFF', style: TextStyle(color: AppTheme.gold, fontSize: 10.sp, fontWeight: FontWeight.bold)),
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  Text('SHOP NOW', style: TextStyle(color: Colors.white, fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                                  SizedBox(width: 4.w),
+                                  Icon(LucideIcons.chevronRight, size: 10.sp, color: Colors.white),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -264,6 +293,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
+
   Widget _buildTierProgress(String currentTier) {
     final tiers = [
       {'label': 'SILVER', 'bonus': '10x Boost'},
@@ -271,14 +301,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       {'label': 'PLATINUM', 'bonus': '25x Boost'},
     ];
 
-    return Container(
+    return GlassContainer(
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
-        boxShadow: AppTheme.premiumShadow,
-      ),
+      borderRadius: 32,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
+      boxShadow: AppTheme.premiumShadow,
       child: Column(
         children: [
           Row(
@@ -300,10 +329,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 4.w),
                   padding: EdgeInsets.symmetric(vertical: 14.h),
                   decoration: BoxDecoration(
-                    color: isActive ? AppTheme.gold : AppTheme.background.withOpacity(0.4),
+                    color: isActive ? AppTheme.gold : AppTheme.background.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: isActive ? AppTheme.gold : AppTheme.gold.withOpacity(0.08)),
-                    boxShadow: isActive ? [BoxShadow(color: AppTheme.gold.withOpacity(0.25), blurRadius: 12, offset: const Offset(0, 4))] : null,
+                    border: Border.all(color: isActive ? AppTheme.gold : AppTheme.gold.withValues(alpha: 0.08)),
+                    boxShadow: isActive ? [BoxShadow(color: AppTheme.gold.withValues(alpha: 0.25), blurRadius: 12, offset: const Offset(0, 4))] : null,
                   ),
                   child: Column(
                     children: [
@@ -321,6 +350,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
+
   Widget _buildConnectBanner() {
     return Container(
       width: double.infinity,
@@ -328,27 +358,37 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       decoration: BoxDecoration(
         color: AppTheme.gold,
         borderRadius: BorderRadius.circular(32.r),
-        boxShadow: [BoxShadow(color: AppTheme.gold.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))],
+        boxShadow: [BoxShadow(color: AppTheme.gold.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))],
       ),
       child: Stack(
         children: [
           Positioned(
             right: -20,
             bottom: -20,
-            child: Icon(LucideIcons.externalLink, size: 100.sp, color: Colors.black.withOpacity(0.05)),
+            child: Icon(LucideIcons.externalLink, size: 100.sp, color: Colors.black.withValues(alpha: 0.08)),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('CONNECT YOUR WEBSITE ACCOUNT', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black, fontSize: 14.sp, fontWeight: FontWeight.w900)),
+              Text('CONNECT YOUR WEBSITE ACCOUNT',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.black,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      )),
               SizedBox(height: 4.h),
-              Text('Unlock bespoke order tracking and extra points for online shopping.', style: TextStyle(color: Colors.black.withOpacity(0.7), fontSize: 10.sp, fontWeight: FontWeight.bold)),
+              Text('Unlock bespoke order tracking and extra points for online shopping.', style: TextStyle(color: Colors.black.withValues(alpha: 0.7), fontSize: 10.sp, fontWeight: FontWeight.bold)),
               SizedBox(height: 16.h),
               GestureDetector(
                 onTap: () => context.go('/website-link'),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.1), borderRadius: BorderRadius.circular(8.r), border: Border.all(color: Colors.black.withOpacity(0.1))),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -365,6 +405,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
     );
   }
+
 
   Widget _buildQuickActions() {
     final actions = [
@@ -389,21 +430,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       itemBuilder: (context, index) {
         final color = actions[index]['color'] as Color;
         final bool isSpecial = actions[index]['special'] == true;
-        
+
         return GestureDetector(
           onTap: () => context.go(actions[index]['path'] as String),
           child: Column(
             children: [
-              Container(
+              GlassContainer(
                 width: 56.w,
                 height: 56.h,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: color.withOpacity(0.1)),
-                  boxShadow: isSpecial ? [BoxShadow(color: color.withOpacity(0.15), blurRadius: 12, offset: const Offset(0, 4))] : null,
-                ),
-                child: Icon(actions[index]['icon'] as IconData, color: color, size: 24.sp),
+                borderRadius: 16,
+                opacity: 0.1,
+                blur: 10,
+                padding: EdgeInsets.zero,
+                color: color.withValues(alpha: 0.1),
+                border: Border.all(color: color.withValues(alpha: 0.1)),
+                boxShadow: isSpecial ? [BoxShadow(color: color.withValues(alpha: 0.15), blurRadius: 12, offset: const Offset(0, 4))] : null,
+                child: Center(child: Icon(actions[index]['icon'] as IconData, color: color, size: 24.sp)),
               ),
               SizedBox(height: 8.h),
               Text(
@@ -416,6 +458,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       },
     );
   }
+
 
   Widget _buildConnectWithUs() {
     return Column(
@@ -452,9 +495,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       width: 200.w,
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -467,32 +510,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           SizedBox(height: 16.h),
           Text(title, style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
           SizedBox(height: 4.h),
-          Text(subtitle, style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 9.sp)),
+          Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 9.sp)),
         ],
       ),
     );
   }
 
   Widget _buildShareExperience() {
-    return Container(
+    return GlassContainer(
       width: double.infinity,
       padding: EdgeInsets.all(32.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(40.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-      ),
+      borderRadius: 40,
+      opacity: 0.05,
+      blur: 15,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Stack(
         children: [
           Positioned(
             right: -10,
             top: -10,
-            child: Icon(LucideIcons.star, size: 80.sp, color: AppTheme.gold.withOpacity(0.05), fill: AppTheme.gold.withOpacity(0.05).value.toDouble()),
+            child: Icon(LucideIcons.star, size: 80.sp, color: AppTheme.gold.withValues(alpha: 0.05), fill: 1.0),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: List.generate(5, (_) => Icon(LucideIcons.star, size: 16.sp, color: AppTheme.gold, fill: AppTheme.gold.value.toDouble()))),
+              Row(children: List.generate(5, (_) => Icon(LucideIcons.star, size: 16.sp, color: AppTheme.gold, fill: 1.0))),
               SizedBox(height: 16.h),
               Text('Love your SuitPro experience?', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20.sp)),
               SizedBox(height: 8.h),
@@ -517,6 +559,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
+
   Widget _buildConciergeServices() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -527,7 +570,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             Text('CONCIERGE SERVICES', style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold, letterSpacing: 1)),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-              decoration: BoxDecoration(color: AppTheme.gold.withOpacity(0.05), borderRadius: BorderRadius.circular(4.r), border: Border.all(color: AppTheme.gold.withOpacity(0.1))),
+              decoration: BoxDecoration(color: AppTheme.gold.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(4.r), border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1))),
               child: Text('PRIORITY ACCESS', style: TextStyle(color: AppTheme.gold, fontSize: 8.sp, fontWeight: FontWeight.bold)),
             ),
           ],
@@ -545,12 +588,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildConciergeItem(IconData icon, String title, String subtitle, Color color) {
-    return Container(
+    return GlassContainer(
       padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(color: AppTheme.card, borderRadius: BorderRadius.circular(24.r), border: Border.all(color: AppTheme.gold.withOpacity(0.1))),
+      borderRadius: 24,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Column(
         children: [
-          Container(padding: EdgeInsets.all(12.w), decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(16.r)), child: Icon(icon, color: color, size: 24.sp)),
+          Container(padding: EdgeInsets.all(12.w), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16.r)), child: Icon(icon, color: color, size: 24.sp)),
           SizedBox(height: 12.h),
           Text(title, style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           SizedBox(height: 4.h),
@@ -559,6 +605,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
     );
   }
+
 
   Widget _buildActivityHistory(AsyncValue<List<dynamic>> activitiesAsync) {
     return Column(
@@ -578,10 +625,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         activitiesAsync.when(
           data: (activities) {
             if (activities.isEmpty) {
-              return Container(
+              return GlassContainer(
                 width: double.infinity,
                 padding: EdgeInsets.all(24.w),
-                decoration: BoxDecoration(color: AppTheme.card, borderRadius: BorderRadius.circular(24.r), border: Border.all(color: AppTheme.gold.withOpacity(0.05))),
+                borderRadius: 24,
+                opacity: 0.05,
+                blur: 5,
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
                 child: Text('No recent activity found.', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 12.sp, fontStyle: FontStyle.italic), textAlign: TextAlign.center),
               );
             }
@@ -589,25 +639,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               children: activities.take(5).map((activity) => _buildActivityItem(activity)).toList(),
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.gold)),
+          loading: () => Column(
+            children: List.generate(3, (index) => const ActivitySkeleton()),
+          ),
           error: (e, st) => Text('Error loading activities', style: TextStyle(color: Colors.red, fontSize: 12.sp)),
         ),
+
       ],
     );
   }
 
   Widget _buildActivityItem(dynamic activity) {
     final bool isPositive = activity.type == 'earn' || activity.type == 'referral' || activity.type == 'bonus';
-    return Container(
+    return GlassContainer(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(color: AppTheme.card, borderRadius: BorderRadius.circular(24.r), border: Border.all(color: AppTheme.gold.withOpacity(0.1))),
+      borderRadius: 24,
+      opacity: 0.05,
+      blur: 5,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: isPositive ? AppTheme.gold.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+              color: isPositive ? AppTheme.gold.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Icon(isPositive ? LucideIcons.trophy : LucideIcons.gift, color: isPositive ? AppTheme.gold : Colors.red, size: 16.sp),
@@ -631,4 +687,5 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
     );
   }
+
 }

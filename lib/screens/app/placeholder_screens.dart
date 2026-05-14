@@ -25,7 +25,7 @@ class PlaceholderScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.construction, size: 64.sp, color: AppTheme.gold.withOpacity(0.2)),
+            Icon(LucideIcons.construction, size: 64.sp, color: AppTheme.gold.withValues(alpha: 0.2)),
             SizedBox(height: 16.h),
             Text('$title Coming Soon', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 16.sp, fontStyle: FontStyle.italic)),
           ],

@@ -42,28 +42,28 @@ class _PointsInfoState extends State<PointsInfo> {
         'title': 'Luxury Purchases',
         'description': 'Earn ${_settings?['points_per_pound'] ?? 10} points for every £1 spent in-store or online.',
         'color': AppTheme.gold,
-        'bg': AppTheme.gold.withOpacity(0.1),
+        'bg': AppTheme.gold.withValues(alpha: 0.1),
       },
       {
         'icon': LucideIcons.userPlus,
         'title': 'Refer a Friend',
         'description': 'Get ${_settings?['referral_bonus'] ?? 100} points when a new member joins using your code.',
         'color': Colors.green,
-        'bg': Colors.green.withOpacity(0.1),
+        'bg': Colors.green.withValues(alpha: 0.1),
       },
       {
         'icon': LucideIcons.logIn,
         'title': 'Daily Visit',
         'description': 'Simply open the app for a daily bonus of ${_settings?['login_bonus'] ?? 10} points.',
         'color': Colors.blue,
-        'bg': Colors.blue.withOpacity(0.1),
+        'bg': Colors.blue.withValues(alpha: 0.1),
       },
       {
         'icon': LucideIcons.gift,
         'title': 'Welcome Gift',
         'description': 'New members start their journey with ${_settings?['welcome_bonus'] ?? 50} points.',
         'color': Colors.purple,
-        'bg': Colors.purple.withOpacity(0.1),
+        'bg': Colors.purple.withValues(alpha: 0.1),
       },
     ];
 
@@ -103,7 +103,7 @@ class _PointsInfoState extends State<PointsInfo> {
       decoration: BoxDecoration(
         color: AppTheme.card,
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +142,7 @@ class _PointsInfoState extends State<PointsInfo> {
               ],
             ),
           ),
-          Icon(LucideIcons.chevronRight, color: AppTheme.gold.withOpacity(0.2), size: 16.sp),
+          Icon(LucideIcons.chevronRight, color: AppTheme.gold.withValues(alpha: 0.2), size: 16.sp),
         ],
       ),
     );
@@ -152,14 +152,14 @@ class _PointsInfoState extends State<PointsInfo> {
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: AppTheme.secondary.withOpacity(0.3),
+        color: AppTheme.secondary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(LucideIcons.info, color: AppTheme.gold.withOpacity(0.6), size: 16.sp),
+          Icon(LucideIcons.info, color: AppTheme.gold.withValues(alpha: 0.6), size: 16.sp),
           SizedBox(width: 12.w),
           Expanded(
             child: Text(

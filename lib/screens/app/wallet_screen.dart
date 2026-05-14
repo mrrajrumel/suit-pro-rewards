@@ -10,12 +10,17 @@ import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/components/points_card.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import 'package:suit_pro_rewards_flutter/widgets/shimmer_loading.dart';
+import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
+
+
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
 
   @override
   ConsumerState<WalletScreen> createState() => _WalletScreenState();
 }
+
 
 class _WalletScreenState extends ConsumerState<WalletScreen> {
   bool _isRefreshing = false;
@@ -79,7 +84,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 decoration: BoxDecoration(
                   color: AppTheme.card,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+                  border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
                 ),
                 child: Icon(LucideIcons.arrowLeft, color: AppTheme.mutedForeground, size: 20.sp),
               ),
@@ -95,7 +100,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             decoration: BoxDecoration(
               color: AppTheme.card,
               shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+              border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
             ),
             child: Icon(LucideIcons.refreshCw, color: AppTheme.gold, size: 16.sp)
                 .animate(target: _isRefreshing ? 1 : 0, onPlay: (controller) => controller.repeat())
@@ -138,31 +143,30 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   }
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {
-    return Container(
+    return GlassContainer(
       padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      borderRadius: 32,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.15),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: color.withOpacity(0.6), size: 14.sp),
+              Icon(icon, color: color.withValues(alpha: 0.6), size: 14.sp),
               SizedBox(width: 8.w),
               Text(
                 label,
                 style: TextStyle(
-                  color: color.withOpacity(0.6),
+                  color: color.withValues(alpha: 0.6),
                   fontSize: 8.5.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.2,
@@ -178,7 +182,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 TextSpan(text: value),
                 TextSpan(
                   text: ' PTS',
-                  style: TextStyle(fontSize: 10.sp, color: Colors.white.withOpacity(0.2), fontWeight: FontWeight.w900),
+                  style: TextStyle(fontSize: 10.sp, color: Colors.white.withValues(alpha: 0.2), fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -187,6 +191,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       ),
     );
   }
+
 
   Widget _buildActivityHistory(AsyncValue<List<dynamic>> activitiesAsync) {
     return Column(
@@ -206,12 +211,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ),
             Row(
               children: [
-                Icon(LucideIcons.download, size: 12.sp, color: AppTheme.mutedForeground.withOpacity(0.6)),
+                Icon(LucideIcons.download, size: 12.sp, color: AppTheme.mutedForeground.withValues(alpha: 0.6)),
                 SizedBox(width: 6.w),
                 Text(
                   'EXPORT STATEMENT',
                   style: TextStyle(
-                    color: AppTheme.mutedForeground.withOpacity(0.6),
+                    color: AppTheme.mutedForeground.withValues(alpha: 0.6),
                     fontSize: 8.sp,
                     fontWeight: FontWeight.w900,
                   ),
@@ -224,17 +229,16 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         activitiesAsync.when(
           data: (activities) {
             if (activities.isEmpty) {
-              return Container(
+              return GlassContainer(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(vertical: 40.h),
-                decoration: BoxDecoration(
-                  color: AppTheme.secondary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
-                ),
+                borderRadius: 24,
+                opacity: 0.05,
+                blur: 5,
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
                 child: Column(
                   children: [
-                    Icon(LucideIcons.history, size: 40.sp, color: AppTheme.mutedForeground.withOpacity(0.1)),
+                    Icon(LucideIcons.history, size: 40.sp, color: AppTheme.mutedForeground.withValues(alpha: 0.1)),
                     SizedBox(height: 16.h),
                     Text(
                       'No transactions recorded yet.',
@@ -254,29 +258,31 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               },
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.gold)),
+          loading: () => Column(
+            children: List.generate(5, (index) => const ActivitySkeleton()),
+          ),
           error: (e, st) => const Center(child: Text('Error loading transactions')),
         ),
+
       ],
     );
   }
 
   Widget _buildActivityItem(dynamic activity, int index) {
     final bool isPositive = activity.type != 'spend';
-    return Container(
+    return GlassContainer(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-      ),
+      borderRadius: 24,
+      opacity: 0.05,
+      blur: 5,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: !isPositive ? Colors.redAccent.withOpacity(0.1) : AppTheme.gold.withOpacity(0.1),
+              color: !isPositive ? Colors.redAccent.withValues(alpha: 0.1) : AppTheme.gold.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Icon(LucideIcons.trophy, color: !isPositive ? Colors.redAccent : AppTheme.gold, size: 16.sp),
@@ -294,7 +300,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 Text(
                   (activity.createdAt != null ? timeago.format(activity.createdAt!) : 'Just now').toUpperCase(),
                   style: TextStyle(
-                    color: AppTheme.mutedForeground.withOpacity(0.6),
+                    color: AppTheme.mutedForeground.withValues(alpha: 0.6),
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -318,7 +324,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               Text(
                 'PTS',
                 style: TextStyle(
-                  color: AppTheme.mutedForeground.withOpacity(0.2),
+                  color: AppTheme.mutedForeground.withValues(alpha: 0.2),
                   fontSize: 8.sp,
                   fontWeight: FontWeight.w900,
                   fontFamily: 'monospace',
@@ -331,52 +337,57 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }
 
+
   Widget _buildQRClaimButton() {
-    return GestureDetector(
-      onTap: () => context.go('/scan-receipt'),
-      child: Container(
-        padding: EdgeInsets.all(24.w),
-        decoration: BoxDecoration(
-          color: AppTheme.secondary.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(40.r),
-          border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16.r),
+    return GlassContainer(
+      padding: EdgeInsets.zero,
+      borderRadius: 40,
+      opacity: 0.1,
+      blur: 20,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
+      child: InkWell(
+        onTap: () => context.go('/scan-receipt'),
+        borderRadius: BorderRadius.circular(40.r),
+        child: Padding(
+          padding: EdgeInsets.all(24.w),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: AppTheme.gold.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Icon(LucideIcons.qrCode, color: AppTheme.gold, size: 22.sp),
               ),
-              child: Icon(LucideIcons.qrCode, color: AppTheme.gold, size: 22.sp),
-            ),
-            SizedBox(width: 20.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Claim with QR Code',
-                    style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    'SCAN YOUR SUITPRO RECEIPT',
-                    style: TextStyle(
-                      color: AppTheme.mutedForeground.withOpacity(0.6),
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.5,
+              SizedBox(width: 20.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Claim with QR Code',
+                      style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w700),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 4.h),
+                    Text(
+                      'SCAN YOUR SUITPRO RECEIPT',
+                      style: TextStyle(
+                        color: AppTheme.mutedForeground.withValues(alpha: 0.6),
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.2), size: 16.sp),
-          ],
+              Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withValues(alpha: 0.2), size: 16.sp),
+            ],
+          ),
         ),
       ),
     );
   }
+
 }

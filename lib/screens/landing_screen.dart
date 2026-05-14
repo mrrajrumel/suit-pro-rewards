@@ -11,7 +11,12 @@ import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 import 'package:suit_pro_rewards_flutter/widgets/google_icon.dart';
 import 'package:suit_pro_rewards_flutter/widgets/logo.dart';
 
+import 'package:suit_pro_rewards_flutter/widgets/premium_button.dart';
+import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
+
+
 enum AuthMode { landing, login, register, forgotPassword, phoneAuth, verifyOtp, adminLogin }
+
 
 class LandingScreen extends ConsumerStatefulWidget {
   const LandingScreen({super.key});
@@ -51,6 +56,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
         await repo.signInWithCredential(credential);
       },
       verificationFailed: (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? 'Verification failed')),
         );
@@ -80,6 +86,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     try {
       await repo.signInWithCredential(credential);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Invalid verification code')),
       );
@@ -117,7 +124,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
               width: 320.w,
               height: 320.h,
               decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.12),
+                color: AppTheme.gold.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: BackdropFilter(
@@ -133,7 +140,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
               width: 320.w,
               height: 320.h,
               decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.06),
+                color: AppTheme.gold.withValues(alpha: 0.06),
                 shape: BoxShape.circle,
               ),
               child: BackdropFilter(
@@ -220,7 +227,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 height: 1.6,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 fontWeight: FontWeight.w600,
               ),
         ).animate().fadeIn(delay: 200.ms),
@@ -262,13 +269,12 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
   }
 
   Widget _buildFeatureItem(Map<String, dynamic> feature, int index) {
-    return Container(
+    return GlassContainer(
+      borderRadius: 24,
+      opacity: 0.05,
+      blur: 10,
       padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
+      border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -280,7 +286,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   fontSize: 9.sp,
-                  color: Colors.white.withOpacity(0.4),
+                  color: Colors.white.withValues(alpha: 0.4),
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
                 ),
@@ -290,58 +296,47 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     ).animate().scale(delay: (index * 100).ms, duration: 400.ms, curve: Curves.easeOutBack);
   }
 
+
   Widget _buildLandingButtons() {
     return Column(
       children: [
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: ElevatedButton(
-            onPressed: () {
-              // TODO: Google Sign In
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              padding: EdgeInsets.symmetric(vertical: 18.h),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const GoogleIcon(size: 20),
-                SizedBox(width: 12.w),
-                Text(
-                  'CONNECT WITH GOOGLE',
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w900, letterSpacing: 1),
-                ),
-              ],
-            ),
-          ),
+        PremiumButton(
+          label: 'CONNECT WITH GOOGLE',
+          onPressed: () {
+            // TODO: Google Sign In
+          },
+          iconWidget: const GoogleIcon(size: 20),
+          color: Colors.white,
+          textColor: Colors.black,
         ),
+
+
         SizedBox(height: 16.h),
         SizedBox(
           width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () => setState(() => _mode = AuthMode.phoneAuth),
-            icon: Icon(LucideIcons.phone, size: 14.sp, color: AppTheme.gold),
-            label: Text(
-              'SIGN IN WITH PHONE',
-              style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 2),
-            ),
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-              side: BorderSide(color: Colors.white.withOpacity(0.1)),
-              backgroundColor: Colors.white.withOpacity(0.04),
+          child: GlassContainer(
+            borderRadius: 16,
+            opacity: 0.04,
+            blur: 10,
+            padding: EdgeInsets.zero,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            child: InkWell(
+              onTap: () => setState(() => _mode = AuthMode.phoneAuth),
+              borderRadius: BorderRadius.circular(16.r),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(LucideIcons.phone, size: 14.sp, color: AppTheme.gold),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'SIGN IN WITH PHONE',
+                      style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white.withValues(alpha: 0.8)),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -349,37 +344,58 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
         Row(
           children: [
             Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => setState(() => _mode = AuthMode.login),
-                icon: Icon(LucideIcons.logIn, size: 12.sp),
-                label: Text(
-                  'LOG IN',
-                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 18.h),
-                  backgroundColor: AppTheme.gold.withOpacity(0.08),
-                  side: BorderSide(color: AppTheme.gold.withOpacity(0.15)),
-                  foregroundColor: AppTheme.gold,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+              child: GlassContainer(
+                borderRadius: 16,
+                opacity: 0.1,
+                blur: 10,
+                padding: EdgeInsets.zero,
+                color: AppTheme.gold.withValues(alpha: 0.08),
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
+                child: InkWell(
+                  onTap: () => setState(() => _mode = AuthMode.login),
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 18.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(LucideIcons.logIn, size: 12.sp, color: AppTheme.gold),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'LOG IN',
+                          style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1, color: AppTheme.gold),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
             SizedBox(width: 12.w),
             Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => setState(() => _mode = AuthMode.register),
-                icon: Icon(LucideIcons.userPlus, size: 12.sp),
-                label: Text(
-                  'SIGN UP',
-                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 18.h),
-                  backgroundColor: Colors.white.withOpacity(0.04),
-                  side: BorderSide(color: Colors.white.withOpacity(0.1)),
-                  foregroundColor: Colors.white.withOpacity(0.8),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+              child: GlassContainer(
+                borderRadius: 16,
+                opacity: 0.04,
+                blur: 10,
+                padding: EdgeInsets.zero,
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                child: InkWell(
+                  onTap: () => setState(() => _mode = AuthMode.register),
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 18.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(LucideIcons.userPlus, size: 12.sp, color: Colors.white.withValues(alpha: 0.8)),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'SIGN UP',
+                          style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1, color: Colors.white.withValues(alpha: 0.8)),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -396,13 +412,14 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
               style: TextStyle(fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 3),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: Colors.white.withOpacity(0.2),
+              foregroundColor: Colors.white.withValues(alpha: 0.2),
             ),
           ),
         ),
       ],
     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }
+
 
   Widget _buildPhoneAuthView() {
     return Column(
@@ -422,17 +439,16 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           alignment: Alignment.centerLeft,
           child: Text(
             'Include country code (e.g. +44 or +1)',
-            style: TextStyle(fontSize: 8.sp, color: Colors.white.withOpacity(0.2)),
+            style: TextStyle(fontSize: 8.sp, color: Colors.white.withValues(alpha: 0.2)),
           ),
         ),
         SizedBox(height: 32.h),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _verifyPhone,
-            child: const Text('SEND CODE'),
-          ),
+        PremiumButton(
+          label: 'SEND CODE',
+          onPressed: _verifyPhone,
+          isLoading: false, // Manage this state if needed
         ),
+
       ],
     ).animate().fadeIn().slideX(begin: 0.1, end: 0);
   }
@@ -451,13 +467,11 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           keyboardType: TextInputType.number,
         ),
         SizedBox(height: 32.h),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _submitOtp,
-            child: const Text('VERIFY & CONTINUE'),
-          ),
+        PremiumButton(
+          label: 'VERIFY & CONTINUE',
+          onPressed: _submitOtp,
         ),
+
         SizedBox(height: 16.h),
         TextButton(
           onPressed: () => setState(() => _mode = AuthMode.phoneAuth),
@@ -480,7 +494,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
               onPressed: () => setState(() => _mode = AuthMode.landing),
               icon: const Icon(LucideIcons.chevronLeft),
               style: IconButton.styleFrom(
-                backgroundColor: Colors.white.withOpacity(0.05),
+                backgroundColor: Colors.white.withValues(alpha: 0.05),
               ),
             ),
             Text(
@@ -530,27 +544,16 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             SizedBox(height: 16.h),
           ],
           if (_mode != AuthMode.adminLogin) ...[
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Google Sign In
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const GoogleIcon(size: 16),
-                    SizedBox(width: 8.w),
-                    Text('CONNECT WITH GOOGLE', style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w900)),
-                  ],
-                ),
-              ),
+            PremiumButton(
+              label: 'CONNECT WITH GOOGLE',
+              onPressed: () {
+                // TODO: Google Sign In
+              },
+              iconWidget: const GoogleIcon(size: 16),
+              color: Colors.white,
+              textColor: Colors.black,
             ),
+
             SizedBox(height: 16.h),
             Row(
               children: [
@@ -559,7 +562,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Text(
                     'OR USE EMAIL',
-                    style: TextStyle(fontSize: 8.sp, color: Colors.white.withOpacity(0.2), fontWeight: FontWeight.w900, letterSpacing: 2),
+                    style: TextStyle(fontSize: 8.sp, color: Colors.white.withValues(alpha: 0.2), fontWeight: FontWeight.w900, letterSpacing: 2),
                   ),
                 ),
                 const Expanded(child: Divider(color: Colors.white10)),
@@ -598,29 +601,12 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             ),
           ],
           SizedBox(height: 32.h),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: isLoading ? null : _submit,
-              child: isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.black,
-                      ),
-                    )
-                  : Text(
-                      (_mode == AuthMode.login || _mode == AuthMode.adminLogin
-                              ? 'LOGIN'
-                              : _mode == AuthMode.register
-                                  ? 'JOIN NOW'
-                                  : 'SEND RESET LINK')
-                          .toUpperCase(),
-                    ),
-            ),
+          PremiumButton(
+            label: _mode == AuthMode.login || _mode == AuthMode.adminLogin ? 'LOGIN' : _mode == AuthMode.register ? 'JOIN NOW' : 'SEND RESET LINK',
+            onPressed: _submit,
+            isLoading: isLoading,
           ),
+
           SizedBox(height: 24.h),
           if (_mode == AuthMode.login)
             _buildAuthToggle('NEW AROUND HERE? ', 'JOIN NOW', () => setState(() => _mode = AuthMode.register)),
@@ -651,7 +637,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                   fontWeight: FontWeight.bold,
                   fontSize: 10.sp,
                   decoration: TextDecoration.underline,
-                  decorationColor: AppTheme.gold.withOpacity(0.3),
+                  decorationColor: AppTheme.gold.withValues(alpha: 0.3),
                 ),
           ),
         ),
@@ -696,7 +682,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           style: TextStyle(fontSize: 14.sp, color: Colors.white),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.3), size: 16.sp),
+            prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: 0.3), size: 16.sp),
           ),
         ),
       ],
@@ -712,7 +698,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             'SUIT PRO REWARDS',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   fontSize: 8.sp,
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   letterSpacing: 4,
                   fontWeight: FontWeight.w900,
                 ),
@@ -722,7 +708,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             'CRAFTING EXCELLENCE',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   fontSize: 7.sp,
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   letterSpacing: 2,
                   fontWeight: FontWeight.w900,
                 ),

@@ -8,7 +8,7 @@ class Logo extends StatefulWidget {
   const Logo({super.key, this.size = 80.0});
 
   @override
-  _LogoState createState() => _LogoState();
+  State<Logo> createState() => _LogoState();
 }
 
 class _LogoState extends State<Logo> {

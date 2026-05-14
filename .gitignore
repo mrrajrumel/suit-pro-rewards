@@ -17,6 +17,7 @@ coverage/
 
 # Flutter specific files
 build/
+.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages

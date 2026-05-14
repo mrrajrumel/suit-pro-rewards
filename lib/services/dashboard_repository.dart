@@ -28,7 +28,18 @@ class DashboardRepository {
   Future<dynamic> getFlashSales() async {
     return await _suitProService.getFlashSales();
   }
+
+  Stream<List<dynamic>> getProducts() {
+    return _firestore
+        .collection('custom_products')
+        .limit(10)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => {'id': doc.id, ...doc.data()})
+            .toList());
+  }
 }
+
 
 final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
   return DashboardRepository(

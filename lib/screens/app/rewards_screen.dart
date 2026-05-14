@@ -7,13 +7,15 @@ import 'package:go_router/go_router.dart';
 import 'package:suit_pro_rewards_flutter/providers/user_provider.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 
+import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
+
 class RewardsScreen extends ConsumerWidget {
   const RewardsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     final userAsync = ref.watch(userProvider);
-    final user = userAsync.asData?.value;
 
     final rewards = [
       {
@@ -85,7 +87,7 @@ class RewardsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: AppTheme.card,
               shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+              border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
             ),
             child: Icon(LucideIcons.arrowLeft, color: AppTheme.mutedForeground, size: 20.sp),
           ),
@@ -105,7 +107,7 @@ class RewardsScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(40.r),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.gold.withOpacity(0.2),
+            color: AppTheme.gold.withValues(alpha: 0.2),
             blurRadius: 25,
             offset: const Offset(0, 12),
           )
@@ -116,14 +118,14 @@ class RewardsScreen extends ConsumerWidget {
           Positioned(
             right: -25.w,
             bottom: -25.h,
-            child: Icon(LucideIcons.gift, size: 120.sp, color: Colors.black.withOpacity(0.08)),
+            child: Icon(LucideIcons.gift, size: 120.sp, color: Colors.black.withValues(alpha: 0.08)),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'YOUR BALANCE',
-                style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 3),
+                style: TextStyle(color: Colors.black.withValues(alpha: 0.6), fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 3),
               ),
               SizedBox(height: 6.h),
               Text(
@@ -139,29 +141,28 @@ class RewardsScreen extends ConsumerWidget {
 
   Widget _buildRewardCard(Map<String, dynamic> reward, int index) {
     final Color color = reward['color'] as Color;
-    return Container(
+    return GlassContainer(
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
+      borderRadius: 32,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.2),
+          blurRadius: 15,
+          offset: const Offset(0, 8),
+        ),
+      ],
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(color: color.withOpacity(0.1)),
+              border: Border.all(color: color.withValues(alpha: 0.1)),
             ),
             child: Icon(reward['icon'] as IconData, color: color, size: 24.sp),
           ),
@@ -184,29 +185,30 @@ class RewardsScreen extends ConsumerWidget {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: AppTheme.secondary, 
+              color: AppTheme.secondary,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
+              border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
             ),
-            child: Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.5), size: 16.sp),
+            child: Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withValues(alpha: 0.5), size: 16.sp),
           ),
         ],
       ),
     ).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }
 
+
   Widget _buildFooterBox() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(32.w),
       decoration: BoxDecoration(
-        color: AppTheme.secondary.withOpacity(0.3),
+        color: AppTheme.secondary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(40.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
       ),
       child: Column(
         children: [
-          Icon(LucideIcons.clock, color: AppTheme.gold.withOpacity(0.2), size: 32.sp),
+          Icon(LucideIcons.clock, color: AppTheme.gold.withValues(alpha: 0.2), size: 32.sp),
           SizedBox(height: 16.h),
           Text(
             '"Patience is the companion of wisdom. More rewards coming soon."',

@@ -20,9 +20,19 @@ class AppTheme {
         end: Alignment.bottomRight,
       );
 
+  static LinearGradient get glassGradient => LinearGradient(
+        colors: [
+          gold.withValues(alpha: 0.15),
+          gold.withValues(alpha: 0.05),
+          Colors.transparent,
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
+
   static List<BoxShadow> get premiumShadow => [
         BoxShadow(
-          color: gold.withOpacity(0.1),
+          color: gold.withValues(alpha: 0.1),
           blurRadius: 30,
           offset: const Offset(0, 15),
           spreadRadius: -5,
@@ -31,7 +41,7 @@ class AppTheme {
 
   static List<BoxShadow> get buttonShadow => [
         BoxShadow(
-          color: gold.withOpacity(0.2),
+          color: gold.withValues(alpha: 0.2),
           blurRadius: 20,
           offset: const Offset(0, 10),
         ),
@@ -93,7 +103,7 @@ class AppTheme {
         ),
         bodyMedium: GoogleFonts.inter(
           fontSize: 14.sp,
-          color: foreground.withOpacity(0.8),
+          color: foreground.withValues(alpha: 0.8),
         ),
         bodySmall: GoogleFonts.inter(
           fontSize: 12.sp,
@@ -125,8 +135,8 @@ class AppTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: foreground.withOpacity(0.8),
-          side: BorderSide(color: Colors.white.withOpacity(0.1)),
+          foregroundColor: foreground.withValues(alpha: 0.8),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
           padding: EdgeInsets.symmetric(vertical: 18.h),
           textStyle: GoogleFonts.inter(
@@ -139,22 +149,22 @@ class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: Colors.white.withValues(alpha: 0.05),
         contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: const BorderSide(color: gold, width: 1),
         ),
         hintStyle: GoogleFonts.inter(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           fontSize: 14.sp,
         ),
         labelStyle: GoogleFonts.inter(

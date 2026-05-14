@@ -8,7 +8,7 @@ class AuthForm extends StatefulWidget {
   const AuthForm(this._submitAuthForm, this.isLoading, {super.key});
 
   @override
-  _AuthFormState createState() => _AuthFormState();
+  State<AuthForm> createState() => _AuthFormState();
 }
 
 class _AuthFormState extends State<AuthForm> {

@@ -11,6 +11,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
+import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
+
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
@@ -18,13 +20,13 @@ class ProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
+
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _showQR = false;
 
   @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(userProvider);
-    final user = userAsync.asData?.value;
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -79,11 +81,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               width: 64.w,
               height: 64.h,
               decoration: BoxDecoration(
-                color: AppTheme.secondary.withOpacity(0.8),
+                color: AppTheme.secondary.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(24.r),
-                border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
               ),
-              child: Icon(LucideIcons.user, color: AppTheme.gold.withOpacity(0.6), size: 32.sp),
+              child: Icon(LucideIcons.user, color: AppTheme.gold.withValues(alpha: 0.6), size: 32.sp),
             ),
             SizedBox(width: 16.w),
             Column(
@@ -94,9 +96,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                   decoration: BoxDecoration(
-                    color: AppTheme.gold.withOpacity(0.1),
+                    color: AppTheme.gold.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
+                    border: Border.all(color: AppTheme.gold.withValues(alpha: 0.2)),
                   ),
                   child: Text(
                     '${user.tier.toUpperCase()} MEMBER',
@@ -124,9 +126,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: color == AppTheme.gold ? AppTheme.gold.withOpacity(0.1) : AppTheme.secondary,
+          color: color == AppTheme.gold ? AppTheme.gold.withValues(alpha: 0.1) : AppTheme.secondary,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: color == AppTheme.gold ? AppTheme.gold.withOpacity(0.2) : AppTheme.gold.withOpacity(0.1)),
+          border: Border.all(color: color == AppTheme.gold ? AppTheme.gold.withValues(alpha: 0.2) : AppTheme.gold.withValues(alpha: 0.1)),
         ),
         child: Icon(icon, color: color == AppTheme.gold ? AppTheme.gold : AppTheme.mutedForeground, size: 20.sp),
       ),
@@ -134,40 +136,44 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildQRCard(dynamic user) {
-    return GestureDetector(
-      onTap: () => setState(() => _showQR = true),
-      child: Container(
-        padding: EdgeInsets.all(28.w),
-        decoration: BoxDecoration(
-          color: AppTheme.card,
-          borderRadius: BorderRadius.circular(40.r),
-          border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
-          boxShadow: AppTheme.premiumShadow,
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(color: AppTheme.gold.withOpacity(0.1), borderRadius: BorderRadius.circular(16.r)),
-              child: Icon(LucideIcons.qrCode, color: AppTheme.gold, size: 24.sp),
-            ),
-            SizedBox(width: 20.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Digital ID Card', style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.w700)),
-                  SizedBox(height: 4.h),
-                  Text('SHOW IN-STORE TO EARN POINTS', style: TextStyle(color: AppTheme.mutedForeground.withOpacity(0.6), fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
-                ],
+    return GlassContainer(
+      padding: EdgeInsets.zero,
+      borderRadius: 40,
+      opacity: 0.1,
+      blur: 20,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
+      boxShadow: AppTheme.premiumShadow,
+      child: InkWell(
+        onTap: () => setState(() => _showQR = true),
+        borderRadius: BorderRadius.circular(40.r),
+        child: Padding(
+          padding: EdgeInsets.all(28.w),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(color: AppTheme.gold.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16.r)),
+                child: Icon(LucideIcons.qrCode, color: AppTheme.gold, size: 24.sp),
               ),
-            ),
-            Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.2), size: 16.sp),
-          ],
+              SizedBox(width: 20.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Digital ID Card', style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.w700)),
+                    SizedBox(height: 4.h),
+                    Text('SHOW IN-STORE TO EARN POINTS', style: TextStyle(color: AppTheme.mutedForeground.withValues(alpha: 0.6), fontSize: 10.sp, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+                  ],
+                ),
+              ),
+              Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withValues(alpha: 0.2), size: 16.sp),
+            ],
+          ),
         ),
       ),
     );
   }
+
 
   Widget _buildSectionHeader(IconData icon, String title) {
     return Padding(
@@ -190,9 +196,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.1),
+                color: AppTheme.gold.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.2)),
               ),
               child: Row(
                 children: [
@@ -209,13 +215,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildInfoSection(dynamic user) {
-    return Container(
+    return GlassContainer(
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-      ),
+      borderRadius: 32,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Column(
         children: [
           _buildInfoRow('Full Name', user.fullName),
@@ -229,14 +234,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildAddressSection(dynamic user) {
-    return Container(
+    return GlassContainer(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-      ),
+      borderRadius: 32,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Text(
         user.address ?? 'No address saved',
         style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold),
@@ -245,13 +249,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildSizesSection(dynamic user) {
-    return Container(
+    return GlassContainer(
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-      ),
+      borderRadius: 32,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -263,6 +266,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+
   Widget _buildSizeItem(String label, String? value) {
     return Column(
       children: [
@@ -270,7 +274,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         SizedBox(height: 8.h),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          decoration: BoxDecoration(color: AppTheme.secondary.withOpacity(0.4), borderRadius: BorderRadius.circular(12.r), border: Border.all(color: AppTheme.gold.withOpacity(0.05))),
+          decoration: BoxDecoration(color: AppTheme.secondary.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12.r), border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05))),
           child: Text(value ?? 'N/A', style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900)),
         ),
       ],
@@ -288,18 +292,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildSettingsItem(IconData icon, String title, String subtitle, Color color) {
-    return Container(
+    return GlassContainer(
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppTheme.card,
-        borderRadius: BorderRadius.circular(32.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
-      ),
+      borderRadius: 32,
+      opacity: 0.05,
+      blur: 10,
+      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(16.r), border: Border.all(color: color.withOpacity(0.2))),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16.r), border: Border.all(color: color.withValues(alpha: 0.2))),
             child: Icon(icon, color: color, size: 24.sp),
           ),
           SizedBox(width: 16.w),
@@ -313,11 +316,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ],
             ),
           ),
-          Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withOpacity(0.3), size: 16.sp),
+          Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withValues(alpha: 0.3), size: 16.sp),
         ],
       ),
     );
   }
+
 
   Widget _buildInfoRow(String label, String value, {bool isMono = false}) {
     return Column(
@@ -343,7 +347,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Center(
       child: Text(
         'MEMBER SINCE $date'.toUpperCase(),
-        style: TextStyle(color: AppTheme.mutedForeground.withOpacity(0.3), fontSize: 9.sp, fontWeight: FontWeight.w900, letterSpacing: 3, fontStyle: FontStyle.italic),
+        style: TextStyle(color: AppTheme.mutedForeground.withValues(alpha: 0.3), fontSize: 9.sp, fontWeight: FontWeight.w900, letterSpacing: 3, fontStyle: FontStyle.italic),
       ),
     );
   }
@@ -351,47 +355,106 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget _buildQRModal(dynamic user) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        color: AppTheme.background.withOpacity(0.95),
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(24.w),
-        child: Container(
-          width: double.infinity,
-          constraints: BoxConstraints(maxWidth: 360.w),
-          decoration: BoxDecoration(
-            color: AppTheme.card,
-            borderRadius: BorderRadius.circular(48.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.3)),
+      body: Stack(
+        children: [
+          // Background Backdrop
+          GestureDetector(
+            onTap: () => setState(() => _showQR = false),
+            child: Container(
+              color: AppTheme.background.withValues(alpha: 0.8),
+            ).animate().fadeIn(),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.all(32.w),
-                decoration: BoxDecoration(
-                  color: AppTheme.gold.withOpacity(0.1),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(48.r)),
-                ),
-                child: Stack(
+
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(24.w),
+              child: GlassContainer(
+                width: double.infinity,
+                borderRadius: 48,
+                opacity: 0.1,
+                blur: 30,
+                padding: EdgeInsets.zero,
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.3)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: GestureDetector(
-                        onTap: () => setState(() => _showQR = false),
-                        child: Icon(LucideIcons.x, color: AppTheme.mutedForeground, size: 20.sp),
+                    Container(
+                      padding: EdgeInsets.all(32.w),
+                      decoration: BoxDecoration(
+                        color: AppTheme.gold.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(48.r)),
+                        border: Border(bottom: BorderSide(color: AppTheme.gold.withValues(alpha: 0.1))),
+                      ),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: GestureDetector(
+                              onTap: () => setState(() => _showQR = false),
+                              child: Icon(LucideIcons.x, color: AppTheme.mutedForeground, size: 20.sp),
+                            ),
+                          ),
+                          Center(
+                            child: Column(
+                              children: [
+                                const Logo(size: 32),
+                                SizedBox(height: 16.h),
+                                Text('Member ID Card', style: Theme.of(context).textTheme.headlineSmall),
+                                SizedBox(height: 8.h),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                                  decoration: BoxDecoration(color: AppTheme.gold.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20.r), border: Border.all(color: AppTheme.gold.withValues(alpha: 0.2))),
+                                  child: Text('${user.tier.toUpperCase()} MEMBER', style: TextStyle(color: AppTheme.gold, fontSize: 9.sp, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Center(
+                    Padding(
+                      padding: EdgeInsets.all(40.w),
                       child: Column(
                         children: [
-                          const Logo(size: 32),
-                          SizedBox(height: 16.h),
-                          Text('Member ID Card', style: Theme.of(context).textTheme.headlineSmall),
-                          SizedBox(height: 8.h),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-                            decoration: BoxDecoration(color: AppTheme.gold.withOpacity(0.1), borderRadius: BorderRadius.circular(20.r), border: Border.all(color: AppTheme.gold.withOpacity(0.2))),
-                            child: Text('${user.tier.toUpperCase()} MEMBER', style: TextStyle(color: AppTheme.gold, fontSize: 9.sp, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                            padding: EdgeInsets.all(24.w),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32.r)),
+                            child: QrImageView(
+                              data: user.id,
+                              version: QrVersions.auto,
+                              size: 180.w,
+                            ),
+                          ),
+                          SizedBox(height: 32.h),
+                          Text(user.fullName, style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 4.h),
+                          Text('ID: ${user.id.substring(0, 16).toUpperCase()}...', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp, fontFamily: 'monospace')),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(24.w),
+                      decoration: BoxDecoration(
+                        color: AppTheme.secondary.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(48.r)),
+                        border: Border(top: BorderSide(color: AppTheme.gold.withValues(alpha: 0.1))),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(LucideIcons.shieldCheck, size: 14.sp, color: AppTheme.gold.withValues(alpha: 0.6)),
+                              SizedBox(width: 8.w),
+                              Text('STORE STAFF ONLY', style: TextStyle(color: AppTheme.gold, fontSize: 10.sp, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Scan this code to verify member status and award points for this visit.',
+                            style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp, fontStyle: FontStyle.italic),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -399,46 +462,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(40.w),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(24.w),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32.r)),
-                      child: QrImageView(
-                        data: user.id,
-                        version: QrVersions.auto,
-                        size: 200.w,
-                      ),
-                    ),
-                    SizedBox(height: 32.h),
-                    Text(user.fullName, style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4.h),
-                    Text('ID: ${user.id.substring(0, 16).toUpperCase()}...', style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp, fontFamily: 'monospace')),
-                  ],
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(24.w),
-                decoration: BoxDecoration(color: AppTheme.secondary, borderRadius: BorderRadius.vertical(bottom: Radius.circular(48.r))),
-                child: Column(
-                  children: [
-                    Text('STORE STAFF', style: TextStyle(color: AppTheme.gold, fontSize: 10.sp, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                    SizedBox(height: 4.h),
-                    Text(
-                      'Scan this code to verify member status and award points for this visit.',
-                      style: TextStyle(color: AppTheme.mutedForeground, fontSize: 10.sp, fontStyle: FontStyle.italic),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
-    ).animate().fadeIn();
+    ).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), curve: Curves.easeOutBack);
   }
+
 }

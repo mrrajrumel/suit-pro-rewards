@@ -72,10 +72,10 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
           decoration: BoxDecoration(
             color: AppTheme.card,
             borderRadius: BorderRadius.circular(40.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
+            border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 blurRadius: 40,
                 offset: const Offset(0, 20),
               ),
@@ -178,7 +178,7 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
                   label: const Text('SIGN OUT FROM APP'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.redAccent,
-                    side: BorderSide(color: Colors.redAccent.withOpacity(0.2)),
+                    side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.2)),
                     padding: EdgeInsets.symmetric(vertical: 18.h),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
                   ),
@@ -191,7 +191,7 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
                       fontSize: 8.sp,
                       fontStyle: FontStyle.italic,
                       letterSpacing: 3,
-                      color: AppTheme.mutedForeground.withOpacity(0.4),
+                      color: AppTheme.mutedForeground.withValues(alpha: 0.4),
                     ),
               ),
             ],
@@ -215,16 +215,16 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
         child: Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: AppTheme.secondary.withOpacity(0.5),
+            color: AppTheme.secondary.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
+            border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
           ),
           child: Row(
             children: [
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(icon, color: color, size: 16.sp),
@@ -236,7 +236,7 @@ class _MemberLayoutState extends ConsumerState<MemberLayout> {
                   style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
                 ),
               ),
-              Icon(LucideIcons.chevronRight, size: 16.sp, color: Colors.white.withOpacity(0.2)),
+              Icon(LucideIcons.chevronRight, size: 16.sp, color: Colors.white.withValues(alpha: 0.2)),
             ],
           ),
         ),

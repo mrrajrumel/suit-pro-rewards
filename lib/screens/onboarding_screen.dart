@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:suit_pro_rewards_flutter/providers/auth_provider.dart';
-import 'package:suit_pro_rewards_flutter/providers/user_provider.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 import 'package:suit_pro_rewards_flutter/widgets/logo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +25,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   String _suitSize = '40R';
   String _shirtSize = '15.5';
   String _trouserSize = '32';
-  final String _referralCodeInput = ''; // TODO: Handle pending referral from local storage
 
   @override
   void initState() {
@@ -79,10 +77,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         'created_at': FieldValue.serverTimestamp(),
       });
 
-      if (mounted) {
-        context.go('/dashboard');
-      }
+      if (!mounted) return;
+      context.go('/dashboard');
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to complete setup: $e')),
       );
@@ -105,7 +103,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               width: 250.w,
               height: 250.h,
               decoration: BoxDecoration(
-                color: AppTheme.gold.withOpacity(0.12),
+                color: AppTheme.gold.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: BackdropFilter(
@@ -129,9 +127,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             child: Container(
                               padding: EdgeInsets.all(16.w),
                               decoration: BoxDecoration(
-                                color: AppTheme.gold.withOpacity(0.1),
+                                color: AppTheme.gold.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
+                                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.2)),
                               ),
                               child: const Logo(size: 48),
                             ),
@@ -178,8 +176,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Text.rich(
           TextSpan(
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 40.sp),
-            children: [
-              const TextSpan(text: 'Nearly '),
+            children: const [
+              TextSpan(text: 'Nearly '),
               TextSpan(
                 text: 'Ready.',
                 style: TextStyle(color: AppTheme.gold, fontStyle: FontStyle.italic),
@@ -218,8 +216,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Text.rich(
           TextSpan(
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 40.sp),
-            children: [
-              const TextSpan(text: 'Your '),
+            children: const [
+              TextSpan(text: 'Your '),
               TextSpan(
                 text: 'Sizes.',
                 style: TextStyle(color: AppTheme.gold, fontStyle: FontStyle.italic),
@@ -272,9 +270,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Container(
           padding: EdgeInsets.all(24.w),
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(0.1),
+            color: Colors.green.withValues(alpha: 0.1),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.green.withOpacity(0.2)),
+            border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
           ),
           child: Icon(LucideIcons.star, color: Colors.green, size: 48.sp),
         ),
@@ -282,8 +280,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Text.rich(
           TextSpan(
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 40.sp),
-            children: [
-              const TextSpan(text: 'All '),
+            children: const [
+              TextSpan(text: 'All '),
               TextSpan(
                 text: 'Set!',
                 style: TextStyle(color: AppTheme.gold, fontStyle: FontStyle.italic),
@@ -304,7 +302,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           decoration: BoxDecoration(
             color: AppTheme.card,
             borderRadius: BorderRadius.circular(32.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
+            border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -336,7 +334,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(color: AppTheme.gold.withOpacity(0.6), fontSize: 10.sp, fontWeight: FontWeight.bold, letterSpacing: 2),
+          style: TextStyle(color: AppTheme.gold.withValues(alpha: 0.6), fontSize: 10.sp, fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
         SizedBox(height: 8.h),
         TextField(
@@ -345,7 +343,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           style: TextStyle(color: Colors.white, fontSize: 14.sp),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: AppTheme.gold.withOpacity(0.4), size: 18.sp),
+            prefixIcon: Icon(icon, color: AppTheme.gold.withValues(alpha: 0.4), size: 18.sp),
           ),
         ),
       ],
@@ -363,7 +361,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(color: AppTheme.gold.withOpacity(0.6), fontSize: 10.sp, fontWeight: FontWeight.bold, letterSpacing: 2),
+          style: TextStyle(color: AppTheme.gold.withValues(alpha: 0.6), fontSize: 10.sp, fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
         SizedBox(height: 8.h),
         Container(
@@ -371,7 +369,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           decoration: BoxDecoration(
             color: AppTheme.secondary,
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+            border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(

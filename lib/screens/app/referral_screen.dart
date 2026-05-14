@@ -76,7 +76,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             decoration: BoxDecoration(
               color: AppTheme.card,
               shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+              border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
             ),
             child: Icon(LucideIcons.arrowLeft, color: AppTheme.mutedForeground, size: 20.sp),
           ),
@@ -94,7 +94,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       decoration: BoxDecoration(
         color: AppTheme.card,
         borderRadius: BorderRadius.circular(40.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.15)),
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
         boxShadow: AppTheme.premiumShadow,
       ),
       child: Stack(
@@ -113,7 +113,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 width: 80.w,
                 height: 80.h,
                 decoration: BoxDecoration(
-                  color: AppTheme.gold.withOpacity(0.1),
+                  color: AppTheme.gold.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(LucideIcons.users, color: AppTheme.gold, size: 40.sp),
@@ -162,7 +162,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 decoration: BoxDecoration(
                   color: AppTheme.secondary,
                   borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: AppTheme.gold.withOpacity(0.1)),
+                  border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
                 ),
                 child: Text(
                   link,
@@ -182,9 +182,9 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               child: Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
-                  color: AppTheme.gold.withOpacity(0.1),
+                  color: AppTheme.gold.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: AppTheme.gold.withOpacity(0.2)),
+                  border: Border.all(color: AppTheme.gold.withValues(alpha: 0.2)),
                 ),
                 child: Icon(
                   _copied ? LucideIcons.check : LucideIcons.copy,
@@ -218,9 +218,9 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     return Container(
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        color: AppTheme.secondary.withOpacity(0.3),
+        color: AppTheme.secondary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.05)),
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
