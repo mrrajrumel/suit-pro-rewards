@@ -15,7 +15,7 @@ class SuitProService {
 
   Future<Response> login(String email, String password) async {
     return await _dio.post(
-      '/login',
+      'login',
       data: {'email': email, 'password': password},
     );
   }
@@ -23,7 +23,7 @@ class SuitProService {
   Future<Response> register(
       String name, String email, String password) async {
     return await _dio.post(
-      '/register',
+      'register',
       data: {
         'name': name,
         'email': email,
@@ -35,36 +35,40 @@ class SuitProService {
 
   Future<Response> getMe() async {
     return await _dio.get(
-      '/me', // NOTE: Endpoint guessed based on common practice, please confirm from docs if it's different.
+      'me',
     );
   }
 
   Future<Response> updateProfile(String id, Map<String, dynamic> data) async {
     return await _dio.put(
-      '/profile/$id', // Placeholder endpoint
+      'profile/$id',
       data: data,
     );
   }
 
   Future<Response> getOrders() async {
-    return await _dio.get('/ecommerce/orders');
+    return await _dio.get('ecommerce/orders');
   }
 
   Future<Response> getLoyaltySummary() async {
-    return await _dio.get('/loyalty/summary');
+    return await _dio.get('loyalty/summary');
   }
 
   Future<Response> getFlashSales() async {
-    return await _dio.get('/ecommerce/flash-sales');
+    return await _dio.get('ecommerce/flash-sales');
   }
 }
 
 final suitProServiceProvider = Provider<SuitProService>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: 'https://suitprolondon.com/api/v1',
+    baseUrl: 'https://suitprolondon.com/api/v1/',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+    validateStatus: (status) {
+      return status != null && status < 500;
     },
   ));
 
