@@ -76,7 +76,7 @@ class _ManageVouchersScreenState extends ConsumerState<ManageVouchersScreen> {
                   'created_at': FieldValue.serverTimestamp(),
                 });
                 
-                if (mounted) Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
               },
               child: const Text('Create'),
             ),

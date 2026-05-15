@@ -48,7 +48,7 @@ class _ManageProductsScreenState extends ConsumerState<ManageProductsScreen> {
                   ),
                   SizedBox(height: 12.h),
                   DropdownButtonFormField<String>(
-                    value: selectedCategory,
+                    initialValue: selectedCategory,
                     dropdownColor: AppTheme.card,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(labelText: 'Category'),
@@ -72,7 +72,7 @@ class _ManageProductsScreenState extends ConsumerState<ManageProductsScreen> {
                       'created_at': FieldValue.serverTimestamp(),
                     });
                     
-                    if (mounted) Navigator.pop(ctx);
+                    if (ctx.mounted) Navigator.pop(ctx);
                   },
                   child: const Text('Add'),
                 ),
