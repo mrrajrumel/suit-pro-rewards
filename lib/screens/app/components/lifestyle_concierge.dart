@@ -20,8 +20,21 @@ class LifestyleConcierge extends StatelessWidget {
   Widget build(BuildContext context) {
     if (products.isEmpty) return const SizedBox();
 
-    // Simplified recommendation logic for Flutter
-    final recommendations = products.take(3).toList();
+    // Tier-based logic adapted from native version
+    List<dynamic> pool = [...products];
+    if (tier == 'Silver') {
+      pool = pool.where((p) => (p['price'] ?? 0) < 500).toList();
+    } else if (tier == 'Gold') {
+      pool = pool.where((p) => (p['price'] ?? 0) >= 500 && (p['price'] ?? 0) < 1500).toList();
+    } else {
+      pool = pool.where((p) => (p['price'] ?? 0) >= 1500).toList();
+    }
+
+    // Fallback to all if pool is empty
+    if (pool.isEmpty) pool = [...products];
+    
+    // Sort randomly and take 3
+    final recommendations = (pool..shuffle()).take(3).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +54,7 @@ class LifestyleConcierge extends StatelessWidget {
                     'PICKS FOR YOU',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: AppTheme.gold,
-                          letterSpacing: 2.sp,
+                          letterSpacing: 3.sp,
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w900,
                         ),
@@ -75,7 +88,7 @@ class LifestyleConcierge extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: recommendations.length,
-            padding: EdgeInsets.only(bottom: 4.h),
+            padding: EdgeInsets.only(bottom: 8.h),
             itemBuilder: (context, index) {
               final product = recommendations[index];
               return GlassContainer(
@@ -93,7 +106,7 @@ class LifestyleConcierge extends StatelessWidget {
                 ],
                 child: Container(
                   margin: EdgeInsets.only(right: 16.w),
-                  padding: EdgeInsets.all(18.w),
+                  padding: EdgeInsets.all(20.w),
                   child: Stack(
                     children: [
                       Positioned(
@@ -154,7 +167,7 @@ class LifestyleConcierge extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 4.h),
+                                  SizedBox(height: 6.h),
                                   Text(
                                     '£${product['price']}',
                                     style: TextStyle(
@@ -169,7 +182,7 @@ class LifestyleConcierge extends StatelessWidget {
                           ),
                           const Spacer(),
                           Text(
-                            product['name'],
+                            product['name'] ?? 'Suit Product',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -179,7 +192,7 @@ class LifestyleConcierge extends StatelessWidget {
                                   letterSpacing: 0,
                                 ),
                           ),
-                          SizedBox(height: 6.h),
+                          SizedBox(height: 8.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -222,4 +235,3 @@ class LifestyleConcierge extends StatelessWidget {
     );
   }
 }
-

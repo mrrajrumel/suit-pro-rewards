@@ -52,7 +52,7 @@ class PointsCard extends ConsumerWidget {
             child: Transform.rotate(
               angle: -0.2,
               child: Icon(
-                LucideIcons.crown,
+                user.tier == 'Platinum' ? LucideIcons.gem : user.tier == 'Gold' ? LucideIcons.crown : LucideIcons.star,
                 size: 160.sp,
                 color: AppTheme.gold.withValues(alpha: 0.05),
               ),
@@ -210,4 +210,3 @@ class PointsCard extends ConsumerWidget {
     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
   }
 }
-

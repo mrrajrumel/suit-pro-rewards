@@ -15,6 +15,7 @@ import 'package:suit_pro_rewards_flutter/screens/app/components/points_info.dart
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:suit_pro_rewards_flutter/widgets/shimmer_loading.dart';
 import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
@@ -29,6 +30,27 @@ class DashboardScreen extends ConsumerStatefulWidget {
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   bool _isRefreshing = false;
+  Map<String, dynamic>? _settings;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSettings();
+  }
+
+  void _fetchSettings() {
+    FirebaseFirestore.instance
+        .collection('site_settings')
+        .doc('global')
+        .snapshots()
+        .listen((snap) {
+      if (mounted && snap.exists) {
+        setState(() {
+          _settings = snap.data();
+        });
+      }
+    });
+  }
 
   Future<void> _handleRefresh() async {
     setState(() => _isRefreshing = true);
@@ -95,16 +117,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       LifestyleConcierge(tier: user.tier, products: dashboardState.products.value ?? []),
                       SizedBox(height: 32.h),
                       const AIStyleGuide(),
-                      if (dashboardState.flashSales.asData?.value.isNotEmpty ?? false) ...[
+                      if (dashboardState.flashSales.value?.isNotEmpty ?? false) ...[
                         SizedBox(height: 32.h),
-                        _buildFlashSales(dashboardState.flashSales),
+                        _buildFlashSales(dashboardState.flashSales.value!),
                       ],
                       SizedBox(height: 32.h),
                       _buildTierProgress(user.tier),
                       SizedBox(height: 32.h),
                       const PointsCard(),
                       SizedBox(height: 32.h),
-                      _buildConnectBanner(),
+                      _buildConnectBanner(user.suitproId != null),
                       SizedBox(height: 32.h),
                       _buildQuickActions(),
                       SizedBox(height: 32.h),
@@ -218,91 +240,87 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Widget _buildFlashSales(AsyncValue<List<dynamic>> flashSalesAsync) {
-    return flashSalesAsync.when(
-      data: (sales) {
-        if (sales.isEmpty) return const SizedBox();
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildFlashSales(List<dynamic> sales) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(LucideIcons.zap, color: AppTheme.gold, size: 16.sp, fill: 1.0),
-                    SizedBox(width: 8.w),
-                    Text('FLASH SALES',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Colors.white,
-                              letterSpacing: 2,
-                              fontWeight: FontWeight.w900,
-                            )),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: AppTheme.gold.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(4.r),
-                    border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
-                  ),
-                  child: Text('LIMITED TIME', style: TextStyle(color: AppTheme.gold, fontSize: 8.sp, fontWeight: FontWeight.bold)),
-                ),
+                Icon(LucideIcons.zap, color: AppTheme.gold, size: 16.sp, fill: 1.0),
+                SizedBox(width: 8.w),
+                Text('FLASH SALES',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w900,
+                        )),
               ],
             ),
-            SizedBox(height: 16.h),
-            SizedBox(
-              height: 130.h,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: sales.length,
-                itemBuilder: (context, index) {
-                  final sale = sales[index];
-                  return GlassContainer(
-                    width: 240.w,
-                    borderRadius: 32,
-                    opacity: 0.08,
-                    blur: 10,
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                      margin: EdgeInsets.only(right: 16.w),
-                      padding: EdgeInsets.all(20.w),
-                      child: Stack(
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: AppTheme.gold.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(4.r),
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
+              ),
+              child: Text('LIMITED TIME', style: TextStyle(color: AppTheme.gold, fontSize: 8.sp, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+        SizedBox(height: 16.h),
+        SizedBox(
+          height: 130.h,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: sales.length,
+            itemBuilder: (context, index) {
+              final sale = sales[index];
+              return GlassContainer(
+                width: 240.w,
+                borderRadius: 32,
+                opacity: 0.08,
+                blur: 10,
+                padding: EdgeInsets.zero,
+                child: Container(
+                  margin: EdgeInsets.only(right: 16.w),
+                  padding: EdgeInsets.all(20.w),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        right: -20.w,
+                        bottom: -20.h,
+                        child: Icon(LucideIcons.zap, size: 80.sp, color: AppTheme.gold.withValues(alpha: 0.05)),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Positioned(
-                            right: -20.w,
-                            bottom: -20.h,
-                            child: Icon(LucideIcons.zap, size: 80.sp, color: AppTheme.gold.withValues(alpha: 0.05)),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(sale.name.toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                              SizedBox(height: 4.h),
-                              Text('Up to ${sale.discountPercentage}% OFF', style: TextStyle(color: AppTheme.gold, fontSize: 10.sp, fontWeight: FontWeight.bold)),
-                              const Spacer(),
-                              Row(
-                                children: [
-                                  Text('SHOP NOW', style: TextStyle(color: Colors.white, fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                                  SizedBox(width: 4.w),
-                                  Icon(LucideIcons.chevronRight, size: 10.sp, color: Colors.white),
-                                ],
-                              ),
-                            ],
+                          Text(sale.name.toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                          SizedBox(height: 4.h),
+                          Text('Up to ${sale.discountPercentage}% OFF', style: TextStyle(color: AppTheme.gold, fontSize: 10.sp, fontWeight: FontWeight.bold)),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () => _launchURL(sale.url),
+                            child: Row(
+                              children: [
+                                Text('SHOP NOW', style: TextStyle(color: Colors.white, fontSize: 8.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                                SizedBox(width: 4.w),
+                                Icon(LucideIcons.chevronRight, size: 10.sp, color: Colors.white),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-      loading: () => const SizedBox(),
-      error: (_, __) => const SizedBox(),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -364,7 +382,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
 
-  Widget _buildConnectBanner() {
+  Widget _buildConnectBanner(bool isLinked) {
+    if (isLinked) return const SizedBox();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
@@ -474,6 +493,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
 
   Widget _buildConnectWithUs() {
+    if (_settings == null || (_settings!['google_maps_url'] == null && _settings!['instagram_url'] == null)) return const SizedBox();
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -483,21 +504,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _buildSocialCard(
-                icon: LucideIcons.star,
-                title: 'REVIEW US',
-                subtitle: 'Share your experience on Google Maps',
-                color: Colors.blue,
-                onTap: () => _launchURL('https://search.google.com/local/writereview?placeid=ChIJ-f_U8OQadkgR0XvFhI3D7f0'), // Placeholder ID
-              ),
-              SizedBox(width: 16.w),
-              _buildSocialCard(
-                icon: LucideIcons.camera,
-                title: 'INSTAGRAM',
-                subtitle: 'Follow our latest styles & collections',
-                color: Colors.purple,
-                onTap: () => _launchURL('https://instagram.com/suitprolondon'),
-              ),
+              if (_settings!['google_maps_url'] != null) ...[
+                _buildSocialCard(
+                  icon: LucideIcons.star,
+                  title: 'REVIEW US',
+                  subtitle: 'Share your experience on Google Maps',
+                  color: Colors.blue,
+                  onTap: () => _launchURL(_settings!['google_maps_url']),
+                ),
+                SizedBox(width: 16.w),
+              ],
+              if (_settings!['instagram_url'] != null)
+                _buildSocialCard(
+                  icon: LucideIcons.camera,
+                  title: 'INSTAGRAM',
+                  subtitle: 'Follow our latest styles & collections',
+                  color: Colors.purple,
+                  onTap: () => _launchURL(_settings!['instagram_url']),
+                ),
             ],
           ),
         ),
@@ -585,7 +609,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () => _launchURL('https://search.google.com/local/writereview?placeid=ChIJ-f_U8OQadkgR0XvFhI3D7f0'),
+                      onPressed: () => _launchURL(_settings?['google_maps_url'] ?? 'https://suitprolondon.com/reviews'),
                       icon: Icon(LucideIcons.mapPin, size: 14.sp, color: AppTheme.gold),
                       label: const Text('GOOGLE MAPS'),
                       style: OutlinedButton.styleFrom(

@@ -44,16 +44,32 @@ class DashboardViewModel extends StateNotifier<DashboardState> {
 
   void _init() {
     _dashboardRepository.getActivities(_userId).listen((activities) {
-      state = state.copyWith(activities: AsyncValue.data(activities));
+      if (mounted) {
+        state = state.copyWith(activities: AsyncValue.data(activities));
+      }
     });
     _dashboardRepository.getLoyaltySummary().then((webStats) {
-      state = state.copyWith(webStats: AsyncValue.data(webStats));
+      if (mounted) {
+        state = state.copyWith(webStats: AsyncValue.data(webStats));
+      }
+    }).catchError((e, st) {
+      if (mounted) {
+        state = state.copyWith(webStats: AsyncValue.error(e, st));
+      }
     });
     _dashboardRepository.getFlashSales().then((flashSales) {
-      state = state.copyWith(flashSales: AsyncValue.data(flashSales));
+      if (mounted) {
+        state = state.copyWith(flashSales: AsyncValue.data(flashSales));
+      }
+    }).catchError((e, st) {
+      if (mounted) {
+        state = state.copyWith(flashSales: AsyncValue.error(e, st));
+      }
     });
     _dashboardRepository.getProducts().listen((products) {
-      state = state.copyWith(products: AsyncValue.data(products));
+      if (mounted) {
+        state = state.copyWith(products: AsyncValue.data(products));
+      }
     });
   }
 }

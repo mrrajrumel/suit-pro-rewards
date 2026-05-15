@@ -28,6 +28,7 @@
         "go_router",
         "google_fonts",
         "image_picker",
+        "in_app_review",
         "intl",
         "lucide_flutter",
         "mobile_scanner",
@@ -1421,6 +1422,24 @@
         "collection",
         "meta",
         "pub_semver"
+      ]
+    },
+    {
+      "name": "in_app_review",
+      "version": "2.0.12",
+      "dependencies": [
+        "flutter",
+        "in_app_review_platform_interface"
+      ]
+    },
+    {
+      "name": "in_app_review_platform_interface",
+      "version": "2.0.5",
+      "dependencies": [
+        "flutter",
+        "platform",
+        "plugin_platform_interface",
+        "url_launcher"
       ]
     }
   ],

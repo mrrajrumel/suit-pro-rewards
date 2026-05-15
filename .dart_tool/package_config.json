@@ -416,6 +416,18 @@
       "languageVersion": "3.6"
     },
     {
+      "name": "in_app_review",
+      "rootUri": "file:///C:/Users/RajRu/AppData/Local/Pub/Cache/hosted/pub.dev/in_app_review-2.0.12",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "in_app_review_platform_interface",
+      "rootUri": "file:///C:/Users/RajRu/AppData/Local/Pub/Cache/hosted/pub.dev/in_app_review_platform_interface-2.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "intl",
       "rootUri": "file:///C:/Users/RajRu/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.19.0",
       "packageUri": "lib/",
