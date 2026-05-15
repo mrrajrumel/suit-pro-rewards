@@ -14,6 +14,7 @@ import 'package:suit_pro_rewards_flutter/screens/app/components/ai_style_guide.d
 import 'package:suit_pro_rewards_flutter/screens/app/components/points_info.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 import 'package:suit_pro_rewards_flutter/widgets/shimmer_loading.dart';
 import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
@@ -534,6 +535,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildShareExperience() {
+    final InAppReview inAppReview = InAppReview.instance;
+
     return GlassContainer(
       width: double.infinity,
       padding: EdgeInsets.all(32.w),
@@ -553,21 +556,46 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             children: [
               Row(children: List.generate(5, (_) => Icon(LucideIcons.star, size: 16.sp, color: AppTheme.gold, fill: 1.0))),
               SizedBox(height: 16.h),
-              Text('Love your SuitPro experience?', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20.sp)),
+              Text('Share Your Experience', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20.sp)),
               SizedBox(height: 8.h),
               Text(
-                '"The highest compliment our patrons can pay us is a recommendation to their circle."',
+                'Your feedback helps us maintain the highest standards of sartorial excellence. Review us directly or on Google Maps.',
                 style: TextStyle(color: AppTheme.mutedForeground, fontSize: 11.sp, fontStyle: FontStyle.italic, height: 1.5),
               ),
               SizedBox(height: 24.h),
-              ElevatedButton.icon(
-                onPressed: () => _launchURL('https://suitprolondon.com/reviews'),
-                icon: Icon(LucideIcons.externalLink, size: 14.sp, color: Colors.black),
-                label: const Text('RATE US ON GOOGLE'),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        if (await inAppReview.isAvailable()) {
+                          inAppReview.requestReview();
+                        } else {
+                          inAppReview.openStoreListing();
+                        }
+                      },
+                      icon: Icon(LucideIcons.penTool, size: 14.sp, color: Colors.black),
+                      label: const Text('RATE APP'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _launchURL('https://search.google.com/local/writereview?placeid=ChIJ-f_U8OQadkgR0XvFhI3D7f0'),
+                      icon: Icon(LucideIcons.mapPin, size: 14.sp, color: AppTheme.gold),
+                      label: const Text('GOOGLE MAPS'),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        side: BorderSide(color: AppTheme.gold.withValues(alpha: 0.5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
