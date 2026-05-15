@@ -14,6 +14,9 @@ class ManageProductsScreen extends ConsumerStatefulWidget {
 
 class _ManageProductsScreenState extends ConsumerState<ManageProductsScreen> {
   String _searchQuery = '';
+  String _categoryFilter = 'all';
+
+  final List<String> _categories = ['all', 'Suits', 'Shirts', 'Accessories', 'Shoes'];
 
   void _addProduct() {
     showDialog(
@@ -21,52 +24,61 @@ class _ManageProductsScreenState extends ConsumerState<ManageProductsScreen> {
       builder: (ctx) {
         final nameController = TextEditingController();
         final priceController = TextEditingController();
-        final categoryController = TextEditingController();
+        String selectedCategory = _categories[1]; // Default to first non-'all' category
         
-        return AlertDialog(
-          backgroundColor: AppTheme.card,
-          title: const Text('Add Product', style: TextStyle(color: Colors.white)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Product Name'),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: AppTheme.card,
+              title: const Text('Add Product', style: TextStyle(color: Colors.white)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(labelText: 'Product Name'),
+                  ),
+                  SizedBox(height: 12.h),
+                  TextField(
+                    controller: priceController,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(labelText: 'Price (£)'),
+                  ),
+                  SizedBox(height: 12.h),
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    dropdownColor: AppTheme.card,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(labelText: 'Category'),
+                    items: _categories.where((c) => c != 'all').map((cat) {
+                      return DropdownMenuItem(value: cat, child: Text(cat));
+                    }).toList(),
+                    onChanged: (v) => setDialogState(() => selectedCategory = v!),
+                  ),
+                ],
               ),
-              SizedBox(height: 12.h),
-              TextField(
-                controller: priceController,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Price (£)'),
-              ),
-              SizedBox(height: 12.h),
-              TextField(
-                controller: categoryController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Category (e.g. Suits)'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () async {
-                if (nameController.text.isEmpty) return;
-                
-                await FirebaseFirestore.instance.collection('custom_products').add({
-                  'name': nameController.text.trim(),
-                  'price': double.tryParse(priceController.text) ?? 0.0,
-                  'category': categoryController.text.trim(),
-                  'created_at': FieldValue.serverTimestamp(),
-                });
-                
-                if (mounted) Navigator.pop(ctx);
-              },
-              child: const Text('Add'),
-            ),
-          ],
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (nameController.text.isEmpty) return;
+                    
+                    await FirebaseFirestore.instance.collection('custom_products').add({
+                      'name': nameController.text.trim(),
+                      'price': double.tryParse(priceController.text) ?? 0.0,
+                      'category': selectedCategory,
+                      'created_at': FieldValue.serverTimestamp(),
+                    });
+                    
+                    if (mounted) Navigator.pop(ctx);
+                  },
+                  child: const Text('Add'),
+                ),
+              ],
+            );
+          }
         );
       },
     );
@@ -85,12 +97,23 @@ class _ManageProductsScreenState extends ConsumerState<ManageProductsScreen> {
         children: [
           Padding(
             padding: EdgeInsets.all(16.w),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search products...',
-                prefixIcon: Icon(LucideIcons.search),
-              ),
-              onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+            child: Column(
+              children: [
+                TextField(
+                  decoration: const InputDecoration(
+                    hintText: 'Search products...',
+                    prefixIcon: Icon(LucideIcons.search),
+                  ),
+                  onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+                ),
+                SizedBox(height: 12.h),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _categories.map((cat) => _buildCategoryChip(cat)).toList(),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -101,10 +124,12 @@ class _ManageProductsScreenState extends ConsumerState<ManageProductsScreen> {
                 
                 final products = snapshot.data!.docs.where((doc) {
                   final data = doc.data() as Map<String, dynamic>;
-                  return data['name'].toString().toLowerCase().contains(_searchQuery);
+                  final matchesSearch = data['name'].toString().toLowerCase().contains(_searchQuery);
+                  final matchesCategory = _categoryFilter == 'all' || data['category'] == _categoryFilter;
+                  return matchesSearch && matchesCategory;
                 }).toList();
 
-                if (products.isEmpty) return const Center(child: Text('No products found.'));
+                if (products.isEmpty) return const Center(child: Text('No matching products found.', style: TextStyle(color: AppTheme.mutedForeground)));
 
                 return GridView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -160,6 +185,30 @@ class _ManageProductsScreenState extends ConsumerState<ManageProductsScreen> {
         onPressed: _addProduct,
         backgroundColor: AppTheme.gold,
         child: const Icon(LucideIcons.plus, color: Colors.black),
+      ),
+    );
+  }
+
+  Widget _buildCategoryChip(String cat) {
+    final bool isSelected = _categoryFilter == cat;
+    return GestureDetector(
+      onTap: () => setState(() => _categoryFilter = cat),
+      child: Container(
+        margin: EdgeInsets.only(right: 8.w),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.gold : AppTheme.secondary,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: isSelected ? AppTheme.gold : AppTheme.gold.withValues(alpha: 0.2)),
+        ),
+        child: Text(
+          cat.toUpperCase(),
+          style: TextStyle(
+            color: isSelected ? Colors.black : Colors.white,
+            fontSize: 10.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

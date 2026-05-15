@@ -20,7 +20,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   bool _isRedeeming = false;
 
   Future<void> _redeemReward(dynamic user, Map<String, dynamic> reward) async {
-    if (user.points < reward['points']) {
+    final int pointsCost = reward['points_required'] ?? reward['points'] ?? 0;
+    
+    if (user.points < pointsCost) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Insufficient points for this reward.')),
       );
@@ -30,11 +32,12 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Confirm Redemption'),
-        content: Text('Redeem ${reward['title']} for ${reward['points']} points?'),
+        backgroundColor: AppTheme.card,
+        title: const Text('Confirm Redemption', style: TextStyle(color: Colors.white)),
+        content: Text('Redeem ${reward['title']} for $pointsCost points?', style: const TextStyle(color: Colors.white70)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Redeem')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Redeem', style: TextStyle(color: AppTheme.gold))),
         ],
       ),
     );
@@ -49,17 +52,19 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
       // 1. Deduct points
       final userRef = FirebaseFirestore.instance.collection('members').doc(user.uid);
       batch.update(userRef, {
-        'points_balance': FieldValue.increment(-reward['points']),
+        'points_balance': FieldValue.increment(-pointsCost),
       });
 
       // 2. Create Voucher
       final voucherRef = FirebaseFirestore.instance.collection('vouchers').doc();
-      final String code = 'SP-${reward['title'].toString().substring(0, 3).toUpperCase()}-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+      final String codeBase = reward['code_base'] ?? reward['title'].toString().substring(0, 3).toUpperCase();
+      final String code = 'SP-$codeBase-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+      
       batch.set(voucherRef, {
         'member_id': user.uid,
         'title': reward['title'],
-        'description': reward['description'],
-        'points_cost': reward['points'],
+        'description': reward['description'] ?? 'Exclusive Reward',
+        'points_cost': pointsCost,
         'code': code,
         'status': 'active',
         'created_at': FieldValue.serverTimestamp(),
@@ -70,7 +75,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
       final transactionRef = FirebaseFirestore.instance.collection('transactions').doc();
       batch.set(transactionRef, {
         'member_id': user.uid,
-        'points': reward['points'],
+        'points': pointsCost,
         'type': 'spend',
         'description': 'Redeemed: ${reward['title']}',
         'created_at': FieldValue.serverTimestamp(),
@@ -98,33 +103,6 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   Widget build(BuildContext context) {
     final userAsync = ref.watch(userProvider);
 
-    final rewards = [
-      {
-        'id': 1,
-        'title': 'Complimentary Pocket Square',
-        'points': 500,
-        'description': 'Silk pocket square with bespoke pattern.',
-        'icon': LucideIcons.star,
-        'color': Colors.blue,
-      },
-      {
-        'id': 2,
-        'title': 'Bespoke Fitting Session',
-        'points': 1200,
-        'description': 'One-on-one expert tailoring consultation.',
-        'icon': LucideIcons.zap,
-        'color': AppTheme.gold,
-      },
-      {
-        'id': 3,
-        'title': 'Member Only Gala Entry',
-        'points': 5000,
-        'description': 'VIP access to our annual sartorial event.',
-        'icon': LucideIcons.gift,
-        'color': Colors.purple,
-      },
-    ];
-
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: userAsync.when(
@@ -145,7 +123,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.gold),
                 ),
                 SizedBox(height: 16.h),
-                ...rewards.asMap().entries.map((entry) => _buildRewardCard(user, entry.value, entry.key)),
+                _buildRewardsList(user),
                 SizedBox(height: 32.h),
                 _buildFooterBox(),
               ],
@@ -155,6 +133,51 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
         loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.gold)),
         error: (e, st) => Center(child: Text('Error: $e')),
       ),
+    );
+  }
+
+  Widget _buildRewardsList(dynamic user) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('master_vouchers').where('active', isEqualTo: true).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator(color: AppTheme.gold));
+        }
+
+        final masterRewards = snapshot.data!.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return {
+            ...data,
+            'id': doc.id,
+            'icon': LucideIcons.ticket,
+            'color': AppTheme.gold,
+          };
+        }).toList();
+
+        // Fallback static rewards if collection is empty
+        final rewards = masterRewards.isNotEmpty ? masterRewards : [
+          {
+            'id': '1',
+            'title': 'Complimentary Pocket Square',
+            'points_required': 500,
+            'description': 'Silk pocket square with bespoke pattern.',
+            'icon': LucideIcons.star,
+            'color': Colors.blue,
+          },
+          {
+            'id': '2',
+            'title': 'Bespoke Fitting Session',
+            'points_required': 1200,
+            'description': 'One-on-one expert tailoring consultation.',
+            'icon': LucideIcons.zap,
+            'color': AppTheme.gold,
+          },
+        ];
+
+        return Column(
+          children: rewards.asMap().entries.map((entry) => _buildRewardCard(user, entry.value, entry.key)).toList(),
+        );
+      }
     );
   }
 
@@ -222,7 +245,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
 
   Widget _buildRewardCard(dynamic user, Map<String, dynamic> reward, int index) {
     final Color color = reward['color'] as Color;
-    final bool canAfford = user.points >= reward['points'];
+    final int pointsRequired = reward['points_required'] ?? reward['points'] ?? 0;
+    final bool canAfford = user.points >= pointsRequired;
 
     return GlassContainer(
       margin: EdgeInsets.only(bottom: 16.h),
@@ -263,7 +287,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
                   Row(
                     children: [
                       Text(
-                        '${reward['points']} PTS',
+                        '$pointsRequired PTS',
                         style: TextStyle(
                           color: canAfford ? AppTheme.gold : Colors.redAccent,
                           fontSize: 11.sp,
@@ -274,7 +298,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
                       if (!canAfford) ...[
                         SizedBox(width: 8.w),
                         Text(
-                          '(NEED ${reward['points'] - user.points} MORE)',
+                          '(NEED ${pointsRequired - user.points} MORE)',
                           style: TextStyle(color: Colors.redAccent.withValues(alpha: 0.6), fontSize: 8.sp, fontWeight: FontWeight.bold),
                         ),
                       ],

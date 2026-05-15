@@ -24,32 +24,42 @@ class _ManageVouchersScreenState extends ConsumerState<ManageVouchersScreen> {
         final titleController = TextEditingController();
         final codeController = TextEditingController();
         final pointsController = TextEditingController();
+        final discountController = TextEditingController();
         
         return AlertDialog(
           backgroundColor: AppTheme.card,
           title: const Text('Create Master Voucher', style: TextStyle(color: Colors.white)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Voucher Title'),
-              ),
-              SizedBox(height: 12.h),
-              TextField(
-                controller: codeController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Promo Code (Base)'),
-              ),
-              SizedBox(height: 12.h),
-              TextField(
-                controller: pointsController,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(labelText: 'Points Required'),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Voucher Title'),
+                ),
+                SizedBox(height: 12.h),
+                TextField(
+                  controller: codeController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Promo Code (Base)'),
+                ),
+                SizedBox(height: 12.h),
+                TextField(
+                  controller: pointsController,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Points Required'),
+                ),
+                SizedBox(height: 12.h),
+                TextField(
+                  controller: discountController,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Discount %'),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
@@ -61,6 +71,7 @@ class _ManageVouchersScreenState extends ConsumerState<ManageVouchersScreen> {
                   'title': titleController.text.trim(),
                   'code_base': codeController.text.trim().toUpperCase(),
                   'points_required': int.tryParse(pointsController.text) ?? 1000,
+                  'discount_percentage': int.tryParse(discountController.text) ?? 10,
                   'active': true,
                   'created_at': FieldValue.serverTimestamp(),
                 });
@@ -91,10 +102,25 @@ class _ManageVouchersScreenState extends ConsumerState<ManageVouchersScreen> {
             child: TextField(
               controller: _searchController,
               decoration: const InputDecoration(
-                hintText: 'Search vouchers by title or code...',
+                hintText: 'Search issued vouchers...',
                 prefixIcon: Icon(LucideIcons.search),
               ),
               onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('RECENTLY ISSUED', style: TextStyle(color: AppTheme.gold, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                TextButton(
+                  onPressed: () {
+                    // TODO: Show master vouchers list
+                  },
+                  child: const Text('VIEW MASTER LIST', style: TextStyle(fontSize: 10)),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -138,10 +164,20 @@ class _ManageVouchersScreenState extends ConsumerState<ManageVouchersScreen> {
                               Text('Expires: ${DateFormat('dd MMM yyyy').format(expiresAt)}', style: const TextStyle(fontSize: 10, color: AppTheme.mutedForeground)),
                           ],
                         ),
-                        trailing: Icon(
-                          data['status'] == 'active' ? LucideIcons.checkCircle : LucideIcons.slash,
-                          color: data['status'] == 'active' ? Colors.green : Colors.redAccent,
-                          size: 18,
+                        trailing: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: data['status'] == 'active' ? Colors.green.withValues(alpha: 0.1) : Colors.redAccent.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            data['status']?.toString().toUpperCase() ?? 'INACTIVE',
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                              color: data['status'] == 'active' ? Colors.green : Colors.redAccent,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -155,6 +191,7 @@ class _ManageVouchersScreenState extends ConsumerState<ManageVouchersScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _addVoucher,
         backgroundColor: AppTheme.gold,
+        tooltip: 'Create Master Voucher',
         child: const Icon(LucideIcons.plus, color: Colors.black),
       ),
     );
