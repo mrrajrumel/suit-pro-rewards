@@ -6,8 +6,8 @@ class WebStats {
 
   factory WebStats.fromJson(Map<String, dynamic> json) {
     return WebStats(
-      totalOrders: json['total_orders'],
-      totalSpent: json['total_spent'],
+      totalOrders: json['total_orders'] ?? 0,
+      totalSpent: json['total_spent'] ?? 0,
     );
   }
 }

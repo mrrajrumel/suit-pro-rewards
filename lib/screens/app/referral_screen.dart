@@ -71,7 +71,13 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     return Row(
       children: [
         GestureDetector(
-          onTap: () => context.pop(),
+          onTap: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/dashboard');
+            }
+          },
           child: Container(
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(

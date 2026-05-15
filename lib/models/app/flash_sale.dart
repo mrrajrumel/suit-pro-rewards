@@ -13,10 +13,10 @@ class FlashSale {
 
   factory FlashSale.fromJson(Map<String, dynamic> json) {
     return FlashSale(
-      id: json['id'],
-      name: json['name'],
-      url: json['url'],
-      discountPercentage: json['discount_percentage'],
+      id: json['id']?.toString() ?? '',
+      name: json['name'] ?? 'Sale',
+      url: json['url'] ?? '',
+      discountPercentage: json['discount_percentage'] ?? 0,
     );
   }
 }

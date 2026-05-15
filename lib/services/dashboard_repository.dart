@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:suit_pro_rewards_flutter/models/app/activity.dart';
+import 'package:suit_pro_rewards_flutter/models/app/flash_sale.dart';
+import 'package:suit_pro_rewards_flutter/models/app/web_stats.dart';
 import 'package:suit_pro_rewards_flutter/services/suitpro_service.dart';
 
 class DashboardRepository {
@@ -21,12 +23,29 @@ class DashboardRepository {
             .toList());
   }
 
-  Future<dynamic> getLoyaltySummary() async {
-    return await _suitProService.getLoyaltySummary();
+  Future<WebStats> getLoyaltySummary() async {
+    try {
+      final response = await _suitProService.getLoyaltySummary();
+      if (response.statusCode == 200 && response.data != null) {
+        return WebStats.fromJson(response.data['data'] ?? {});
+      }
+    } catch (e) {
+      // Fallback for 404 or other network errors
+    }
+    return WebStats(totalOrders: 0, totalSpent: 0);
   }
 
-  Future<dynamic> getFlashSales() async {
-    return await _suitProService.getFlashSales();
+  Future<List<FlashSale>> getFlashSales() async {
+    try {
+      final response = await _suitProService.getFlashSales();
+      if (response.statusCode == 200 && response.data != null) {
+        final List<dynamic> list = response.data['data'] ?? [];
+        return list.map((item) => FlashSale.fromJson(item)).toList();
+      }
+    } catch (e) {
+      // Fallback
+    }
+    return [];
   }
 
   Stream<List<dynamic>> getProducts() {

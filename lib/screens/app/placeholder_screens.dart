@@ -17,7 +17,13 @@ class PlaceholderScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft, color: AppTheme.gold),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/dashboard');
+            }
+          },
         ),
         title: Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20.sp)),
       ),

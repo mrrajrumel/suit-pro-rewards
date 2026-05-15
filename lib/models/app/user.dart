@@ -13,6 +13,7 @@ class AppUser {
   final String? suitSize;
   final String? shirtSize;
   final String? trouserSize;
+  final String? address;
 
   AppUser({
     required this.uid,
@@ -29,6 +30,7 @@ class AppUser {
     this.suitSize,
     this.shirtSize,
     this.trouserSize,
+    this.address,
   });
 
   factory AppUser.fromFirestore(Map<String, dynamic> data, String documentId) {
@@ -47,6 +49,7 @@ class AppUser {
       suitSize: data['suit_size'],
       shirtSize: data['shirt_size'],
       trouserSize: data['trouser_size'],
+      address: data['address'],
     );
   }
 
@@ -65,6 +68,7 @@ class AppUser {
       'suit_size': suitSize,
       'shirt_size': shirtSize,
       'trouser_size': trouserSize,
+      'address': address,
     };
   }
 }

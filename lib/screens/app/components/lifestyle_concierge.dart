@@ -71,11 +71,11 @@ class LifestyleConcierge extends StatelessWidget {
         ),
         SizedBox(height: 16.h),
         SizedBox(
-          height: 190.h,
+          height: 195.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: recommendations.length,
-            padding: EdgeInsets.only(bottom: 8.h),
+            padding: EdgeInsets.only(bottom: 4.h),
             itemBuilder: (context, index) {
               final product = recommendations[index];
               return GlassContainer(
@@ -93,7 +93,7 @@ class LifestyleConcierge extends StatelessWidget {
                 ],
                 child: Container(
                   margin: EdgeInsets.only(right: 16.w),
-                  padding: EdgeInsets.all(20.w),
+                  padding: EdgeInsets.all(18.w),
                   child: Stack(
                     children: [
                       Positioned(
@@ -125,7 +125,12 @@ class LifestyleConcierge extends StatelessWidget {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(20.r),
                                   child: product['image'] != null
-                                      ? Image.network(product['image'], fit: BoxFit.cover)
+                                      ? Image.network(
+                                          product['image'],
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) => 
+                                            Icon(LucideIcons.package, color: AppTheme.gold.withValues(alpha: 0.2)),
+                                        )
                                       : Icon(LucideIcons.package, color: AppTheme.gold.withValues(alpha: 0.2)),
                                 ),
                               ),
@@ -149,7 +154,7 @@ class LifestyleConcierge extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 6.h),
+                                  SizedBox(height: 4.h),
                                   Text(
                                     '£${product['price']}',
                                     style: TextStyle(
@@ -174,7 +179,7 @@ class LifestyleConcierge extends StatelessWidget {
                                   letterSpacing: 0,
                                 ),
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 6.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
