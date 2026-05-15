@@ -81,25 +81,32 @@ flutter run -d ios
 
 ## 🏗️ Build Guide
 
-### Android
-**Generate APK (For testing/sharing)**
-```bash
-flutter build apk --release --split-per-abi
-```
-*Output: `build/app/outputs/flutter-apk/app-release.apk`*
+### Android (Release)
+1. **Clean build artifacts:**
+   ```bash
+   flutter clean
+   ```
+2. **Generate Split APKs (Optimized for size):**
+   ```bash
+   flutter build apk --release --split-per-abi
+   ```
+   *Output: `build/app/outputs/flutter-apk/app-release.apk`*
+3. **Generate App Bundle (For Play Store):**
+   ```bash
+   flutter build appbundle --release
+   ```
+   *Output: `build/app/outputs/bundle/release/app-release.aab`*
 
-**Generate App Bundle (For Play Store)**
-```bash
-flutter build appbundle --release
-```
-*Output: `build/app/outputs/bundle/release/app-release.aab`*
-
-### iOS
-**Generate IPA (For App Store/TestFlight)**
-```bash
-flutter build ios --release --no-codesign
-```
-*Note: You must have an active Apple Developer account and configure signing in Xcode for production builds.*
+### iOS (Release)
+1. **Install dependencies:**
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+2. **Generate IPA for TestFlight/App Store:**
+   ```bash
+   flutter build ios --release --no-codesign
+   ```
+   *Note: Open `Runner.xcworkspace` in Xcode to configure Signing & Capabilities before final distribution.*
 
 ---
 
@@ -109,18 +116,18 @@ flutter build ios --release --no-codesign
 lib/
 ├── core/             # App-wide constants and Firebase configuration
 ├── models/           # Data models (User, Activity, Order, Voucher, etc.)
-├── providers/        # Riverpod state management (ViewModels & Providers)
-│   └── admin/        # Administrative state logic
-├── routes/           # GoRouter navigation configuration
+├── providers/        # Riverpod State Management (ViewModels & Providers)
+│   └── admin/        # Administrative logic
+├── routes/           # GoRouter navigation setup
 ├── screens/          # UI Screen implementations
-│   ├── admin/        # Administrative dashboard and user management
-│   ├── app/          # Core user features (Dashboard, Wallet, Rewards)
-│   │   └── components/ # Feature-specific UI components
-│   └── auth/         # Authentication forms
-├── services/         # API repositories and business logic services
-├── themes/           # App-wide styling and themes
-├── utils/            # Utility classes and helpers
-└── widgets/          # Reusable global UI components (Logo, Button, etc.)
+│   ├── admin/        # Staff Dashboard and User Management
+│   ├── app/          # User Features (Dashboard, Wallet, Rewards)
+│   │   └── components/ # Local UI components
+│   └── auth/         # Login and Registration forms
+├── services/         # API Repositories and Firebase logic
+├── themes/           # Custom App-wide styling
+├── utils/            # Shared helper functions
+└── widgets/          # Reusable global UI widgets (PremiumButton, etc.)
 ```
 
 ---
@@ -173,15 +180,8 @@ Here is a breakdown of the key UI files and the features they handle:
 
 Feel free to connect or reach out for inquiries:
 
-<div align="left">
-
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mrrajrumel)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mrrajrumel/)
-[![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://www.facebook.com/mrrajrumel/)
-[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/mrrajrumel/)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:rajrum3l@gmail.com)
-
-</div>
+| [ ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) ](https://github.com/mrrajrumel) | [ ![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white) ](https://www.linkedin.com/in/mrrajrumel/) | [ ![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white) ](https://www.facebook.com/mrrajrumel/) | [ ![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white) ](https://www.instagram.com/mrrajrumel/) | [ ![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white) ](mailto:rajrum3l@gmail.com) |
+| :---: | :---: | :---: | :---: | :---: |
 
 ---
 
