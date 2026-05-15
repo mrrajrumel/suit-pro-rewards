@@ -11,9 +11,9 @@ Suit Pro Rewards is a premium loyalty and rewards application for **Suit Pro Lon
 - **Exclusive Rewards**: Access and redeem loyalty points and vouchers.
 - **Real-time Sync**: Seamless integration with the Suit Pro London website and Firebase.
 - **Smart Wallet**: Track points, tier status (Silver, Gold, Platinum), and history.
-- **Admin Panel**: Manage users, adjust points, and oversee rewards directly from the app.
-- **QR Scanner**: Built-in mobile scanner for seamless transactions.
-- **Responsive UI**: Optimized for all screen sizes with a premium dark theme.
+- **Sartorial AI**: Instant expert advice on bespoke style & garment care.
+- **QR Scanner**: Built-in mobile scanner for seamless in-store transactions.
+- **Premium UI**: Dark-themed, high-end design with smooth frosted-glass effects.
 
 ---
 
@@ -23,6 +23,7 @@ Suit Pro Rewards is a premium loyalty and rewards application for **Suit Pro Lon
 - **Backend**: [Firebase](https://firebase.google.com/) (Auth, Firestore, Messaging, Storage)
 - **Networking**: [Dio](https://pub.dev/packages/dio) for REST API integration.
 - **Routing**: [GoRouter](https://pub.dev/packages/go_router) for deep-linking and declarative navigation.
+- **Animations**: [Flutter Animate](https://pub.dev/packages/flutter_animate)
 - **Icons**: [Lucide Flutter](https://pub.dev/packages/lucide_flutter)
 
 ---
@@ -83,22 +84,22 @@ flutter run -d ios
 ### Android
 **Generate APK (For testing/sharing)**
 ```bash
-flutter build apk --release
+flutter build apk --release --split-per-abi
 ```
 *Output: `build/app/outputs/flutter-apk/app-release.apk`*
 
 **Generate App Bundle (For Play Store)**
 ```bash
-flutter build appbundle
+flutter build appbundle --release
 ```
 *Output: `build/app/outputs/bundle/release/app-release.aab`*
 
 ### iOS
 **Generate IPA (For App Store/TestFlight)**
 ```bash
-flutter build ios --release
+flutter build ios --release --no-codesign
 ```
-*Note: You must have an active Apple Developer account and configure signing in Xcode.*
+*Note: You must have an active Apple Developer account and configure signing in Xcode for production builds.*
 
 ---
 
@@ -106,18 +107,21 @@ flutter build ios --release
 
 ```text
 lib/
-├── core/         # Firebase configuration and app-wide constants
-├── models/       # Data models (User, Activity, Reward, etc.)
-├── providers/    # Riverpod state management logic
-├── routes/       # GoRouter navigation configuration
-├── screens/      # UI Screens and Feature implementation
-│   ├── auth/     # Authentication forms and logic
-│   ├── app/      # Core user features (Dashboard, Wallet, Rewards)
-│   ├── admin/    # Admin panel for user management
-│   └── shared/   # Common screens like Loading or Error
-├── services/     # API repositories and Firebase services
-├── themes/       # Dark/Light theme definitions
-└── widgets/      # Reusable UI components
+├── core/             # App-wide constants and Firebase configuration
+├── models/           # Data models (User, Activity, Order, Voucher, etc.)
+├── providers/        # Riverpod state management (ViewModels & Providers)
+│   └── admin/        # Administrative state logic
+├── routes/           # GoRouter navigation configuration
+├── screens/          # UI Screen implementations
+│   ├── admin/        # Administrative dashboard and user management
+│   ├── app/          # Core user features (Dashboard, Wallet, Rewards)
+│   │   └── components/ # Feature-specific UI components
+│   └── auth/         # Authentication forms
+├── services/         # API repositories and business logic services
+├── themes/           # App-wide styling and themes
+├── utils/            # Utility classes and helpers
+└── widgets/          # Reusable global UI components (Logo, Button, etc.)
+```
 
 ---
 
@@ -126,48 +130,39 @@ lib/
 Here is a breakdown of the key UI files and the features they handle:
 
 ### 🔐 Authentication & Onboarding
-- **`landing_screen.dart`**: The entry point of the app with options for Social login (Google/Apple) and Email.
-- **`auth_form.dart`**: Dynamic form handling both Login and Registration with real-time validation.
-- **`auth_gate.dart`**: A smart wrapper that listens to auth state changes and routes users to either the Landing or Home screen.
+- **`landing_screen.dart`**: The entry point with Social login (Google), Phone, and Email options.
+- **`onboarding_screen.dart`**: Multi-step setup for name, contact, and garment sizes.
+- **`auth_gate.dart`**: Listens to auth state changes to route users appropriately.
 
 ### 👤 Member Features (User Side)
-- **`user_dashboard_screen.dart`**: Personalized home screen showing point balance, tier status, and quick action buttons.
-- **`wallet_screen.dart`**: Detailed view of transaction history, loyalty points, and digital membership card.
-- **`rewards_screen.dart`**: Marketplace for browsing and redeeming exclusive vouchers and perks.
-- **`profile_screen.dart` & `edit_profile_screen.dart`**: Personal info management and app settings.
-- **`member_layout.dart`**: Provides the persistent bottom navigation and consistent layout across user screens.
+- **`dashboard_screen.dart`**: Main home screen with points balance, product picks, and quick actions.
+- **`wallet_screen.dart`**: Detailed transaction history and digital membership card.
+- **`rewards_screen.dart`**: Market for browsing and redeeming exclusive perks.
+- **`profile_screen.dart`**: Personal info, measurements, and app settings.
+- **`member_layout.dart`**: Persistent bottom navigation and unified app layout.
+- **`referral_screen.dart`**: Program for sharing invite codes and earning bonuses.
 
 ### 🛡️ Admin Panel
-- **`admin_dashboard_screen.dart`**: High-level overview and navigation for administrative tasks.
-- **`manage_users_screen.dart`**: List of all registered members with search and filtering capabilities.
-- **`admin_edit_user_screen.dart`**: Interface to manually adjust user points, change roles (Admin/User), and update member info.
+- **`admin_dashboard_screen.dart`**: Management overview for staff.
+- **`manage_users_screen.dart`**: Member directory with search and filtering.
+- **`admin_edit_user_screen.dart`**: Direct adjustment of user points and roles.
 
-### 🛠️ Core Components
-- **`dashboard_screen.dart`**: Multi-functional dashboard containing the QR Scanner and real-time updates.
-- **`loading_screen.dart`**: A premium, custom-animated loading experience used during data fetching.
+### 🛠️ Core UI Components
+- **`ai_style_guide.dart`**: AI-powered concierge for garment care advice.
+- **`lifestyle_concierge.dart`**: Tier-based product recommendations.
+- **`glass_container.dart`**: Premium frosted-glass effect used across the app.
 
 ---
 
 ## 🔧 Useful Commands
 
-### Flutter Development
 | Command | Purpose |
 | :--- | :--- |
 | `flutter pub get` | Install project dependencies |
 | `flutter analyze` | Check for code errors and warnings |
 | `dart format .` | Format all files according to Dart guidelines |
-| `flutter clean` | Clear build cache (useful for fixing build errors) |
-| `flutter doctor` | Check your Flutter environment status |
-| `flutter upgrade` | Upgrade Flutter SDK |
-
-### Android Native (Gradle)
-Run these commands from the `android/` directory:
-| Command | Purpose |
-| :--- | :--- |
-| `./gradlew clean` | Clean the Android build cache |
-| `./gradlew assembleRelease` | Build the release APK |
-| `./gradlew bundleRelease` | Build the release App Bundle |
-| `./gradlew signRelease` | Sign the release build (requires config) |
+| `flutter clean` | Clear build cache |
+| `flutter doctor` | Check Flutter environment status |
 
 ---
 
@@ -178,13 +173,15 @@ Run these commands from the `android/` directory:
 
 Feel free to connect or reach out for inquiries:
 
-<p align="left">
-<a href="https://github.com/mrrajrumel" target="blank"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="mrrajrumel" /></a>
-<a href="https://www.linkedin.com/in/mrrajrumel/" target="blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="mrrajrumel" /></a>
-<a href="https://www.facebook.com/mrrajrumel/" target="blank"><img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="mrrajrumel" /></a>
-<a href="https://www.instagram.com/mrrajrumel/" target="blank"><img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="mrrajrumel" /></a>
-<a href="mailto:rajrum3l@gmail.com" target="blank"><img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="rajrum3l@gmail.com" /></a>
-</p>
+<div align="left">
+
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mrrajrumel)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mrrajrumel/)
+[![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://www.facebook.com/mrrajrumel/)
+[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/mrrajrumel/)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:rajrum3l@gmail.com)
+
+</div>
 
 ---
 
