@@ -45,23 +45,9 @@ class _LogoState extends State<Logo> {
         height: widget.size,
       );
     } else {
-      // Fallback SVG
-      return SvgPicture.string(
-        '''
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#D4AF37" />
-              <stop offset="50%" stop-color="#F6DC7D" />
-              <stop offset="100%" stop-color="#BE8009" />
-            </linearGradient>
-          </defs>
-          <g fill="url(#gold-gradient)">
-            <path d="M50 5 L10 20 V50 C10 75 50 95 50 95 C50 95 90 75 90 50 V20 L50 5 Z" />
-            <path d="M50 25 L35 45 L50 90 L65 45 L50 25 Z M50 35 L45 42 H55 L50 35 Z" fill="#1A1A1A" opacity="0.9" />
-          </g>
-        </svg>
-        ''',
+      // Fallback to local asset SVG
+      return SvgPicture.asset(
+        'assets/icons/logo.svg',
         width: widget.size,
         height: widget.size,
       );
