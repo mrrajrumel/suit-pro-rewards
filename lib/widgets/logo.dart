@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Logo extends StatefulWidget {
@@ -27,9 +26,12 @@ class _LogoState extends State<Logo> {
           .doc('global')
           .get();
       if (doc.exists && doc.data()!.containsKey('logo_url')) {
-        setState(() {
-          _logoUrl = doc.data()!['logo_url'];
-        });
+        final url = doc.data()!['logo_url'];
+        if (url != null && url.toString().isNotEmpty) {
+          setState(() {
+            _logoUrl = url;
+          });
+        }
       }
     } catch (e) {
       // Handle error
@@ -43,14 +45,24 @@ class _LogoState extends State<Logo> {
         _logoUrl!,
         width: widget.size,
         height: widget.size,
+        errorBuilder: (context, error, stackTrace) => _buildFallback(),
       );
     } else {
-      // Fallback to local asset SVG
-      return SvgPicture.asset(
-        'assets/icons/logo.svg',
-        width: widget.size,
-        height: widget.size,
-      );
+      return _buildFallback();
     }
+  }
+
+  Widget _buildFallback() {
+    return Image.asset(
+      'assets/images/logo.png',
+      width: widget.size,
+      height: widget.size,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) => Icon(
+        Icons.shield_outlined,
+        size: widget.size,
+        color: const Color(0xFFD4AF37),
+      ),
+    );
   }
 }
