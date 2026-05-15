@@ -75,14 +75,11 @@ final suitProServiceProvider = Provider<SuitProService>((ref) {
   // Add an interceptor to include the auth token in all requests
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
-      // Don't send token or API key for login/register
-      final bool isAuthPath = options.path.contains('login') || options.path.contains('register');
+      // Always include the Web API Key
+      options.headers['X-API-KEY'] = 'oF5MWN7zpNPyH2EWk2yTBv806E8GqRH9';
       
-      if (!isAuthPath) {
-        options.headers['X-API-KEY'] = 'oF5MWN7zpNPyH2EWk2yTBv806E8GqRH9';
-        if (_suitProToken != null) {
-          options.headers['Authorization'] = 'Bearer $_suitProToken';
-        }
+      if (_suitProToken != null) {
+        options.headers['Authorization'] = 'Bearer $_suitProToken';
       }
       return handler.next(options);
     },

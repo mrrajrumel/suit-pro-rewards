@@ -323,7 +323,9 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             child: InkWell(
               onTap: () {
                 FocusScope.of(context).unfocus();
-                setState(() => _mode = AuthMode.phoneAuth);
+                Future.delayed(const Duration(milliseconds: 50), () {
+                  if (mounted) setState(() => _mode = AuthMode.phoneAuth);
+                });
               },
               borderRadius: BorderRadius.circular(16.r),
               child: Padding(
@@ -357,7 +359,9 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 child: InkWell(
                   onTap: () {
                     FocusScope.of(context).unfocus();
-                    setState(() => _mode = AuthMode.login);
+                    Future.delayed(const Duration(milliseconds: 50), () {
+                      if (mounted) setState(() => _mode = AuthMode.login);
+                    });
                   },
                   borderRadius: BorderRadius.circular(16.r),
                   child: Padding(
@@ -388,7 +392,9 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 child: InkWell(
                   onTap: () {
                     FocusScope.of(context).unfocus();
-                    setState(() => _mode = AuthMode.register);
+                    Future.delayed(const Duration(milliseconds: 50), () {
+                      if (mounted) setState(() => _mode = AuthMode.register);
+                    });
                   },
                   borderRadius: BorderRadius.circular(16.r),
                   child: Padding(
@@ -416,7 +422,9 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           child: TextButton.icon(
             onPressed: () {
               FocusScope.of(context).unfocus();
-              setState(() => _mode = AuthMode.adminLogin);
+              Future.delayed(const Duration(milliseconds: 50), () {
+                if (mounted) setState(() => _mode = AuthMode.adminLogin);
+              });
             },
             icon: Icon(LucideIcons.lock, size: 10.sp),
             label: Text(
@@ -508,7 +516,9 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             IconButton(
               onPressed: () {
                 FocusScope.of(context).unfocus();
-                setState(() => _mode = AuthMode.landing);
+                Future.delayed(const Duration(milliseconds: 50), () {
+                  if (mounted) setState(() => _mode = AuthMode.landing);
+                });
               },
               icon: const Icon(LucideIcons.chevronLeft),
               style: IconButton.styleFrom(
@@ -609,7 +619,9 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                   ? GestureDetector(
                       onTap: () {
                       FocusScope.of(context).unfocus();
-                      setState(() => _mode = AuthMode.forgotPassword);
+                      Future.delayed(const Duration(milliseconds: 50), () {
+                        if (mounted) setState(() => _mode = AuthMode.forgotPassword);
+                      });
                     },
                     child: Text(
                         'FORGOT?',
@@ -632,12 +644,16 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           if (_mode == AuthMode.login)
             _buildAuthToggle('NEW AROUND HERE? ', 'JOIN NOW', () {
               FocusScope.of(context).unfocus();
-              setState(() => _mode = AuthMode.register);
+              Future.delayed(const Duration(milliseconds: 50), () {
+                if (mounted) setState(() => _mode = AuthMode.register);
+              });
             }),
           if (_mode == AuthMode.register)
             _buildAuthToggle('ALREADY JOINED? ', 'LOG IN', () {
               FocusScope.of(context).unfocus();
-              setState(() => _mode = AuthMode.login);
+              Future.delayed(const Duration(milliseconds: 50), () {
+                if (mounted) setState(() => _mode = AuthMode.login);
+              });
             }),
         ],
       ).animate().fadeIn().slideX(begin: 0.1, end: 0),

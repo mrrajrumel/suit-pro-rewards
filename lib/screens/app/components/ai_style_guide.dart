@@ -20,6 +20,26 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
   bool _isLoading = false;
   final String _apiKey = 'AIzaSyCuN2k6W65ngjrkjSkNCCVE4l7Y4KDkSAc';
 
+  void _openAssistant() {
+    setState(() {
+      _isOpen = true;
+    });
+    
+    // Auto-message if conversation is empty
+    if (_messages.isEmpty) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted && _isOpen) {
+          setState(() {
+            _messages.add({
+              'role': 'assistant', 
+              'content': "Welcome, patron. How may I assist with your sartorial queries today? Ask me about suit pairings, fabric maintenance, or evening wear etiquette."
+            });
+          });
+        }
+      });
+    }
+  }
+
   Future<void> _getAdvice() async {
     final query = _queryController.text.trim();
     if (query.isEmpty || _isLoading) return;
@@ -70,7 +90,7 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
     return Column(
       children: [
         GestureDetector(
-          onTap: () => setState(() => _isOpen = true),
+          onTap: _openAssistant,
           child: GlassContainer(
             width: double.infinity,
             borderRadius: 40,
