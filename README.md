@@ -11,6 +11,7 @@ Suit Pro Rewards is a premium loyalty and rewards application for **Suit Pro Lon
 - **Exclusive Rewards**: Access and redeem loyalty points and vouchers.
 - **Real-time Sync**: Seamless integration with the Suit Pro London website and Firebase.
 - **Smart Wallet**: Track points, tier status (Silver, Gold, Platinum), and history.
+- **Referral System**: Automated tracking via Play Store Install Referrer with bonus rewards for both parties.
 - **Sartorial AI**: Instant expert advice on bespoke style & garment care.
 - **QR Scanner**: Built-in mobile scanner for seamless in-store transactions.
 - **Premium UI**: Dark-themed, high-end design with smooth frosted-glass effects.

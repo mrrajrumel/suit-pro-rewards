@@ -9,6 +9,7 @@ import 'package:suit_pro_rewards_flutter/providers/auth_provider.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 import 'package:suit_pro_rewards_flutter/widgets/logo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:suit_pro_rewards_flutter/services/referral_service.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -22,6 +23,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   bool _isSubmitting = false;
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _referralController = TextEditingController();
   String _suitSize = '40R';
   String _shirtSize = '15.5';
   String _trouserSize = '32';
@@ -29,9 +31,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    _initOnboarding();
+  }
+
+  Future<void> _initOnboarding() async {
     final user = ref.read(authStateChangesProvider).asData?.value;
     if (user != null) {
       _nameController.text = user.displayName ?? '';
+    }
+
+    // Check for captured Play Store referral
+    final String? pendingRef = await ReferralService.getPendingReferral();
+    if (pendingRef != null && mounted) {
+      _referralController.text = pendingRef;
     }
   }
 
@@ -39,6 +51,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
+    _referralController.dispose();
     super.dispose();
   }
 
@@ -50,15 +63,53 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     try {
       final String referralCode = _nameController.text.split(' ')[0].toUpperCase() + user.uid.substring(0, 4).toUpperCase();
+      final String inputReferral = _referralController.text.trim().toUpperCase();
 
+      final batch = FirebaseFirestore.instance.batch();
+      
+      String? referredByUid;
+      bool hasValidReferral = false;
+
+      // 1. Verify Referral Code if provided
+      if (inputReferral.isNotEmpty) {
+        final refQuery = await FirebaseFirestore.instance
+            .collection('members')
+            .where('referral_code', isEqualTo: inputReferral)
+            .limit(1)
+            .get();
+
+        if (refQuery.docs.isNotEmpty) {
+          referredByUid = refQuery.docs.first.id;
+          hasValidReferral = true;
+          
+          // Credit the referrer (e.g., 200 points)
+          final referrerRef = FirebaseFirestore.instance.collection('members').doc(referredByUid);
+          batch.update(referrerRef, {
+            'points_balance': FieldValue.increment(200),
+          });
+
+          // Log transaction for referrer
+          final referrerTxRef = FirebaseFirestore.instance.collection('transactions').doc();
+          batch.set(referrerTxRef, {
+            'member_id': referredByUid,
+            'points': 200,
+            'type': 'referral',
+            'description': 'Referral Bonus: ${_nameController.text}',
+            'created_at': FieldValue.serverTimestamp(),
+          });
+        }
+      }
+
+      // 2. Prepare member data
       final memberData = {
         'full_name': _nameController.text.trim(),
         'email': user.email,
         'phone': _phoneController.text.trim(),
         'tier': 'Silver',
-        'points': 50, // Welcome bonus
+        'points_balance': hasValidReferral ? 150 : 50, // 50 welcome + 100 for being referred
         'total_spent': 0,
         'referral_code': referralCode,
+        'referred_by': referredByUid,
         'suit_size': _suitSize,
         'shirt_size': _shirtSize,
         'trouser_size': _trouserSize,
@@ -66,16 +117,32 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         'created_at': FieldValue.serverTimestamp(),
       };
 
-      await FirebaseFirestore.instance.collection('members').doc(user.uid).set(memberData);
+      final memberRef = FirebaseFirestore.instance.collection('members').doc(user.uid);
+      batch.set(memberRef, memberData);
 
-      // Add welcome bonus transaction
-      await FirebaseFirestore.instance.collection('transactions').add({
+      // 3. Log Welcome Bonus for new user
+      final welcomeTxRef = FirebaseFirestore.instance.collection('transactions').doc();
+      batch.set(welcomeTxRef, {
         'member_id': user.uid,
         'points': 50,
-        'type': 'earn',
+        'type': 'bonus',
         'description': 'Welcome Bonus',
         'created_at': FieldValue.serverTimestamp(),
       });
+
+      if (hasValidReferral) {
+        final referralTxRef = FirebaseFirestore.instance.collection('transactions').doc();
+        batch.set(referralTxRef, {
+          'member_id': user.uid,
+          'points': 100,
+          'type': 'referral',
+          'description': 'Referred by $inputReferral',
+          'created_at': FieldValue.serverTimestamp(),
+        });
+      }
+
+      await batch.commit();
+      await ReferralService.clearPendingReferral();
 
       if (!mounted) return;
       context.go('/dashboard');
@@ -203,6 +270,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           hint: '+44 ...',
           icon: LucideIcons.phone,
           keyboardType: TextInputType.phone,
+        ),
+        SizedBox(height: 16.h),
+        _buildTextField(
+          controller: _referralController,
+          label: 'REFERRAL CODE (OPTIONAL)',
+          hint: 'e.g. RUMEA5OB',
+          icon: LucideIcons.share2,
         ),
       ],
     ).animate().slideX(begin: 0.1, end: 0).fadeIn();

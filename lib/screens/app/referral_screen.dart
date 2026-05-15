@@ -42,7 +42,8 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     final user = userAsync.asData?.value;
 
     final String referralCode = user?.referralCode ?? user?.uid.substring(0, 8).toUpperCase() ?? 'SUITPRO';
-    final String referralLink = 'https://suitprolondon.app/join?ref=$referralCode';
+    // Format for Play Store Install Referrer tracking
+    final String referralLink = 'https://play.google.com/store/apps/details?id=com.suitpro.app&referrer=ref%3D$referralCode';
 
     return Scaffold(
       backgroundColor: AppTheme.background,

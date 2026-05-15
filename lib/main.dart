@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:suit_pro_rewards_flutter/routes/app_router.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
+import 'package:suit_pro_rewards_flutter/services/referral_service.dart';
 import 'core/firebase_options.dart';
 
 void main() async {
@@ -11,6 +12,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
+  // Initialize referral tracking
+  await ReferralService.initTracking();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
