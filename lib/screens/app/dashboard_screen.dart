@@ -13,6 +13,7 @@ import 'package:suit_pro_rewards_flutter/screens/app/components/lifestyle_concie
 import 'package:suit_pro_rewards_flutter/screens/app/components/ai_style_guide.dart';
 import 'package:suit_pro_rewards_flutter/screens/app/components/points_info.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:suit_pro_rewards_flutter/widgets/shimmer_loading.dart';
 import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
@@ -34,6 +35,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     await Future.delayed(const Duration(seconds: 1));
     if (mounted) {
       setState(() => _isRefreshing = false);
+    }
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch $url')),
+        );
+      }
     }
   }
 
@@ -475,6 +487,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 title: 'REVIEW US',
                 subtitle: 'Share your experience on Google Maps',
                 color: Colors.blue,
+                onTap: () => _launchURL('https://search.google.com/local/writereview?placeid=ChIJ-f_U8OQadkgR0XvFhI3D7f0'), // Placeholder ID
               ),
               SizedBox(width: 16.w),
               _buildSocialCard(
@@ -482,6 +495,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 title: 'INSTAGRAM',
                 subtitle: 'Follow our latest styles & collections',
                 color: Colors.purple,
+                onTap: () => _launchURL('https://instagram.com/suitprolondon'),
               ),
             ],
           ),
@@ -490,28 +504,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Widget _buildSocialCard({required IconData icon, required String title, required String subtitle, required Color color}) {
-    return Container(
-      width: 200.w,
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12.r)),
-            child: Icon(icon, color: Colors.white, size: 20.sp),
-          ),
-          SizedBox(height: 16.h),
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
-          SizedBox(height: 4.h),
-          Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 9.sp)),
-        ],
+  Widget _buildSocialCard({required IconData icon, required String title, required String subtitle, required Color color, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 200.w,
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12.r)),
+              child: Icon(icon, color: Colors.white, size: 20.sp),
+            ),
+            SizedBox(height: 16.h),
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w900, letterSpacing: 1)),
+            SizedBox(height: 4.h),
+            Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 9.sp)),
+          ],
+        ),
       ),
     );
   }
@@ -544,7 +561,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
               SizedBox(height: 24.h),
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () => _launchURL('https://suitprolondon.com/reviews'),
                 icon: Icon(LucideIcons.externalLink, size: 14.sp, color: Colors.black),
                 label: const Text('RATE US ON GOOGLE'),
                 style: ElevatedButton.styleFrom(
@@ -578,30 +595,33 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         SizedBox(height: 16.h),
         Row(
           children: [
-            Expanded(child: _buildConciergeItem(LucideIcons.clock, 'BOOK FITTING', 'Schedule your expert session', AppTheme.gold)),
+            Expanded(child: _buildConciergeItem(LucideIcons.clock, 'BOOK FITTING', 'Schedule your expert session', AppTheme.gold, onTap: () => _launchURL('https://suitprolondon.com/book'))),
             SizedBox(width: 16.w),
-            Expanded(child: _buildConciergeItem(LucideIcons.sparkles, 'STYLE ASSISTANT', 'AI-powered fashion advice', Colors.purple)),
+            Expanded(child: _buildConciergeItem(LucideIcons.sparkles, 'STYLE ASSISTANT', 'AI-powered fashion advice', Colors.purple, onTap: () => setState(() {}))), // AI Guide is already on page
           ],
         ),
       ],
     );
   }
 
-  Widget _buildConciergeItem(IconData icon, String title, String subtitle, Color color) {
-    return GlassContainer(
-      padding: EdgeInsets.all(20.w),
-      borderRadius: 24,
-      opacity: 0.05,
-      blur: 10,
-      border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
-      child: Column(
-        children: [
-          Container(padding: EdgeInsets.all(12.w), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16.r)), child: Icon(icon, color: color, size: 24.sp)),
-          SizedBox(height: 12.h),
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-          SizedBox(height: 4.h),
-          Text(subtitle, style: TextStyle(color: AppTheme.mutedForeground, fontSize: 8.sp), textAlign: TextAlign.center),
-        ],
+  Widget _buildConciergeItem(IconData icon, String title, String subtitle, Color color, {required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: GlassContainer(
+        padding: EdgeInsets.all(20.w),
+        borderRadius: 24,
+        opacity: 0.05,
+        blur: 10,
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.1)),
+        child: Column(
+          children: [
+            Container(padding: EdgeInsets.all(12.w), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16.r)), child: Icon(icon, color: color, size: 24.sp)),
+            SizedBox(height: 12.h),
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+            SizedBox(height: 4.h),
+            Text(subtitle, style: TextStyle(color: AppTheme.mutedForeground, fontSize: 8.sp), textAlign: TextAlign.center),
+          ],
+        ),
       ),
     );
   }

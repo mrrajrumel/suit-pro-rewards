@@ -66,6 +66,7 @@ final suitProServiceProvider = Provider<SuitProService>((ref) {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
+      'X-API-KEY': 'oF5MWN7zpNPyH2EWk2yTBv806E8GqRH9',
     },
     validateStatus: (status) {
       return status != null && status < 500;

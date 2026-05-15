@@ -6,15 +6,96 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:suit_pro_rewards_flutter/providers/user_provider.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
 
-class RewardsScreen extends ConsumerWidget {
+class RewardsScreen extends ConsumerStatefulWidget {
   const RewardsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RewardsScreen> createState() => _RewardsScreenState();
+}
 
+class _RewardsScreenState extends ConsumerState<RewardsScreen> {
+  bool _isRedeeming = false;
+
+  Future<void> _redeemReward(dynamic user, Map<String, dynamic> reward) async {
+    if (user.points < reward['points']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Insufficient points for this reward.')),
+      );
+      return;
+    }
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirm Redemption'),
+        content: Text('Redeem ${reward['title']} for ${reward['points']} points?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Redeem')),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    setState(() => _isRedeeming = true);
+
+    try {
+      final batch = FirebaseFirestore.instance.batch();
+      
+      // 1. Deduct points
+      final userRef = FirebaseFirestore.instance.collection('members').doc(user.uid);
+      batch.update(userRef, {
+        'points_balance': FieldValue.increment(-reward['points']),
+      });
+
+      // 2. Create Voucher
+      final voucherRef = FirebaseFirestore.instance.collection('vouchers').doc();
+      final String code = 'SP-${reward['title'].toString().substring(0, 3).toUpperCase()}-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+      batch.set(voucherRef, {
+        'member_id': user.uid,
+        'title': reward['title'],
+        'description': reward['description'],
+        'points_cost': reward['points'],
+        'code': code,
+        'status': 'active',
+        'created_at': FieldValue.serverTimestamp(),
+        'expires_at': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
+      });
+
+      // 3. Log Transaction
+      final transactionRef = FirebaseFirestore.instance.collection('transactions').doc();
+      batch.set(transactionRef, {
+        'member_id': user.uid,
+        'points': reward['points'],
+        'type': 'spend',
+        'description': 'Redeemed: ${reward['title']}',
+        'created_at': FieldValue.serverTimestamp(),
+      });
+
+      await batch.commit();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Reward redeemed! Voucher code: $code')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Redemption failed: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isRedeeming = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final userAsync = ref.watch(userProvider);
 
     final rewards = [
@@ -64,7 +145,7 @@ class RewardsScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.gold),
                 ),
                 SizedBox(height: 16.h),
-                ...rewards.asMap().entries.map((entry) => _buildRewardCard(entry.value, entry.key)),
+                ...rewards.asMap().entries.map((entry) => _buildRewardCard(user, entry.value, entry.key)),
                 SizedBox(height: 32.h),
                 _buildFooterBox(),
               ],
@@ -139,8 +220,10 @@ class RewardsScreen extends ConsumerWidget {
     ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack);
   }
 
-  Widget _buildRewardCard(Map<String, dynamic> reward, int index) {
+  Widget _buildRewardCard(dynamic user, Map<String, dynamic> reward, int index) {
     final Color color = reward['color'] as Color;
+    final bool canAfford = user.points >= reward['points'];
+
     return GlassContainer(
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(24.w),
@@ -155,43 +238,62 @@ class RewardsScreen extends ConsumerWidget {
           offset: const Offset(0, 8),
         ),
       ],
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(color: color.withValues(alpha: 0.1)),
+      child: InkWell(
+        onTap: _isRedeeming ? null : () => _redeemReward(user, reward),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(color: color.withValues(alpha: 0.1)),
+              ),
+              child: Icon(reward['icon'] as IconData, color: color, size: 24.sp),
             ),
-            child: Icon(reward['icon'] as IconData, color: color, size: 24.sp),
-          ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(reward['title'] as String, style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w700)),
-                SizedBox(height: 4.h),
-                Text(reward['description'] as String, style: TextStyle(color: AppTheme.mutedForeground, fontSize: 11.sp, height: 1.4)),
-                SizedBox(height: 10.h),
-                Text(
-                  '${reward['points']} PTS',
-                  style: TextStyle(color: AppTheme.gold, fontSize: 11.sp, fontWeight: FontWeight.w900, letterSpacing: 1.5),
-                ),
-              ],
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(reward['title'] as String, style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                  SizedBox(height: 4.h),
+                  Text(reward['description'] as String, style: TextStyle(color: AppTheme.mutedForeground, fontSize: 11.sp, height: 1.4)),
+                  SizedBox(height: 10.h),
+                  Row(
+                    children: [
+                      Text(
+                        '${reward['points']} PTS',
+                        style: TextStyle(
+                          color: canAfford ? AppTheme.gold : Colors.redAccent,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      if (!canAfford) ...[
+                        SizedBox(width: 8.w),
+                        Text(
+                          '(NEED ${reward['points'] - user.points} MORE)',
+                          style: TextStyle(color: Colors.redAccent.withValues(alpha: 0.6), fontSize: 8.sp, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(
-              color: AppTheme.secondary,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
+            Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: AppTheme.secondary,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.05)),
+              ),
+              child: Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withValues(alpha: 0.5), size: 16.sp),
             ),
-            child: Icon(LucideIcons.chevronRight, color: AppTheme.mutedForeground.withValues(alpha: 0.5), size: 16.sp),
-          ),
-        ],
+          ],
+        ),
       ),
     ).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
   }

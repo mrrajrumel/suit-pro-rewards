@@ -14,6 +14,8 @@ import 'package:suit_pro_rewards_flutter/screens/app/edit_profile_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/admin/admin_dashboard_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/admin/manage_users_screen.dart';
 import 'package:suit_pro_rewards_flutter/screens/admin/admin_edit_user_screen.dart';
+import 'package:suit_pro_rewards_flutter/screens/admin/manage_vouchers_screen.dart';
+import 'package:suit_pro_rewards_flutter/screens/admin/manage_products_screen.dart';
 import 'package:suit_pro_rewards_flutter/models/app/user.dart';
 import 'package:suit_pro_rewards_flutter/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -116,6 +118,18 @@ class AppRouter {
                 },
               ),
             ],
+          ),
+          GoRoute(
+            path: 'vouchers',
+            builder: (context, state) => const ManageVouchersScreen(),
+          ),
+          GoRoute(
+            path: 'products',
+            builder: (context, state) => const ManageProductsScreen(),
+          ),
+          GoRoute(
+            path: 'settings',
+            builder: (context, state) => const PlaceholderScreen(title: 'Settings'),
           ),
         ],
       ),

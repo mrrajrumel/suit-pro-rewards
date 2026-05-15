@@ -4,6 +4,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:suit_pro_rewards_flutter/themes/app_theme.dart';
 import 'package:suit_pro_rewards_flutter/widgets/glass_container.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:dio/dio.dart';
 
 class AIStyleGuide extends StatefulWidget {
   const AIStyleGuide({super.key});
@@ -15,25 +16,52 @@ class AIStyleGuide extends StatefulWidget {
 class _AIStyleGuideState extends State<AIStyleGuide> {
   bool _isOpen = false;
   final TextEditingController _queryController = TextEditingController();
-  String _response = '';
+  final List<Map<String, String>> _messages = [];
   bool _isLoading = false;
+  final String _apiKey = 'AIzaSyCuN2k6W65ngjrkjSkNCCVE4l7Y4KDkSAc';
 
-  void _getAdvice() async {
+  Future<void> _getAdvice() async {
     final query = _queryController.text.trim();
     if (query.isEmpty || _isLoading) return;
 
     setState(() {
       _isLoading = true;
+      _messages.add({'role': 'user', 'content': query});
+      _queryController.clear();
     });
 
-    // TODO: Integrate with AI Service (e.g. Gemini)
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final dio = Dio();
+      final response = await dio.post(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey',
+        data: {
+          "contents": [
+            {
+              "parts": [
+                {
+                  "text": "You are 'Suit Pro Assistant', a high-end sartorial concierge for Suit Pro London. Your expertise is in bespoke tailoring, garment care (especially wool, silk, and linen), suit pairings, and evening wear etiquette. Always maintain a distinguished, polite, and helpful tone. User query: $query"
+                }
+              ]
+            }
+          ]
+        },
+      );
 
-    if (mounted) {
-      setState(() {
-        _response = "As a distinguished patron of Suit Pro London, I recommend storing your wool suits in a breathable garment bag to preserve the natural fibers. Avoid plastic covers as they trap moisture. For daily care, use a horsehair brush to remove surface dust.";
-        _isLoading = false;
-      });
+      final String aiResponse = response.data['candidates'][0]['content']['parts'][0]['text'];
+
+      if (mounted) {
+        setState(() {
+          _messages.add({'role': 'assistant', 'content': aiResponse});
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _messages.add({'role': 'assistant', 'content': "Apologies, patron. I am currently unable to reach the archives. Please try again shortly."});
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -157,7 +185,7 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
                               children: [
                                 Icon(LucideIcons.sparkles, color: AppTheme.gold, size: 40.sp),
                                 SizedBox(height: 16.h),
-                                Text('Style Concierge', style: Theme.of(context).textTheme.headlineSmall),
+                                Text('Suit Pro Assistant', style: Theme.of(context).textTheme.headlineSmall),
                               ],
                             ),
                           ),
@@ -169,48 +197,64 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
                       child: Column(
                         children: [
                           Container(
-                            constraints: BoxConstraints(minHeight: 150.h, maxHeight: 300.h),
-                            child: SingleChildScrollView(
-                              child: _response.isNotEmpty
-                                  ? Column(
-                                      children: [
-                                        Text(
-                                          _response,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12.sp,
-                                            fontStyle: FontStyle.italic,
-                                            height: 1.6,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        SizedBox(height: 24.h),
-                                        Divider(color: AppTheme.gold.withValues(alpha: 0.05)),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            _buildBadge(LucideIcons.shieldCheck, 'Certified Advice'),
-                                            SizedBox(width: 16.w),
-                                            _buildBadge(LucideIcons.heart, 'Patron Care'),
-                                          ],
-                                        ),
-                                      ],
-                                    )
-                                  : Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 40.h),
-                                        child: Text(
-                                          '"Welcome, patron. How may I assist with your sartorial queries today? Ask me about suit pairings, fabric maintenance, or evening wear etiquette."',
-                                          style: TextStyle(
-                                            color: AppTheme.mutedForeground,
-                                            fontSize: 12.sp,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
+                            constraints: BoxConstraints(minHeight: 150.h, maxHeight: 400.h),
+                            child: _messages.isEmpty 
+                              ? Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 40.h),
+                                    child: Text(
+                                      '"Welcome, patron. How may I assist with your sartorial queries today? Ask me about suit pairings, fabric maintenance, or evening wear etiquette."',
+                                      style: TextStyle(
+                                        color: AppTheme.mutedForeground,
+                                        fontSize: 12.sp,
+                                        fontStyle: FontStyle.italic,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
-                            ),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: _messages.length,
+                                  itemBuilder: (context, index) {
+                                    final msg = _messages[index];
+                                    final isUser = msg['role'] == 'user';
+                                    return Padding(
+                                      padding: EdgeInsets.only(bottom: 16.h),
+                                      child: Column(
+                                        crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(12.w),
+                                            decoration: BoxDecoration(
+                                              color: isUser ? AppTheme.gold.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05),
+                                              borderRadius: BorderRadius.circular(16.r),
+                                            ),
+                                            child: Text(
+                                              msg['content']!,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12.sp,
+                                                fontStyle: isUser ? FontStyle.normal : FontStyle.italic,
+                                                height: 1.5,
+                                              ),
+                                            ),
+                                          ),
+                                          if (!isUser && index == _messages.length - 1) ...[
+                                            SizedBox(height: 8.h),
+                                            Row(
+                                              children: [
+                                                _buildBadge(LucideIcons.shieldCheck, 'Certified Advice'),
+                                                SizedBox(width: 16.w),
+                                                _buildBadge(LucideIcons.heart, 'Patron Care'),
+                                              ],
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
                           ),
                           SizedBox(height: 24.h),
                           Row(
@@ -219,6 +263,7 @@ class _AIStyleGuideState extends State<AIStyleGuide> {
                                 child: TextField(
                                   controller: _queryController,
                                   style: TextStyle(fontSize: 12.sp, color: Colors.white),
+                                  onSubmitted: (_) => _getAdvice(),
                                   decoration: InputDecoration(
                                     hintText: 'e.g. How to store wool suits?',
                                     hintStyle: TextStyle(color: Colors.white24, fontSize: 12.sp),
