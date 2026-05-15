@@ -15,7 +15,7 @@ class SuitProService {
 
   Future<Response> login(String email, String password) async {
     return await _dio.post(
-      '/api/v1/login',
+      '/login',
       data: {'email': email, 'password': password},
     );
   }
@@ -23,7 +23,7 @@ class SuitProService {
   Future<Response> register(
       String name, String email, String password) async {
     return await _dio.post(
-      '/api/v1/register',
+      '/register',
       data: {
         'name': name,
         'email': email,
@@ -35,37 +35,46 @@ class SuitProService {
 
   Future<Response> getMe() async {
     return await _dio.get(
-      '/api/v1/me', // NOTE: Endpoint guessed based on common practice, please confirm from docs if it's different.
+      '/me', // NOTE: Endpoint guessed based on common practice, please confirm from docs if it's different.
     );
   }
 
   Future<Response> updateProfile(String id, Map<String, dynamic> data) async {
     return await _dio.put(
-      '/api/v1/profile/$id', // Placeholder endpoint
+      '/profile/$id', // Placeholder endpoint
       data: data,
     );
   }
 
   Future<Response> getOrders() async {
-    return await _dio.get('/api/v1/ecommerce/orders');
+    return await _dio.get('/ecommerce/orders');
   }
 
   Future<Response> getLoyaltySummary() async {
-    return await _dio.get('/api/v1/loyalty/summary');
+    return await _dio.get('/loyalty/summary');
   }
 
   Future<Response> getFlashSales() async {
-    return await _dio.get('/api/v1/ecommerce/flash-sales');
+    return await _dio.get('/ecommerce/flash-sales');
   }
 }
 
 final suitProServiceProvider = Provider<SuitProService>((ref) {
-  final dio = Dio(BaseOptions(baseUrl: 'https://suitprolondon.com'));
+  final dio = Dio(BaseOptions(
+    baseUrl: 'https://suitprolondon.com/api/v1',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  ));
 
   // Add an interceptor to include the auth token in all requests
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
-      if (_suitProToken != null) {
+      // Don't send token for login or register endpoints
+      final bool isAuthPath = options.path.contains('login') || options.path.contains('register');
+      
+      if (_suitProToken != null && !isAuthPath) {
         options.headers['Authorization'] = 'Bearer $_suitProToken';
       }
       return handler.next(options);
