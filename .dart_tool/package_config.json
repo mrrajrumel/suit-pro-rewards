@@ -8,6 +8,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "android_play_install_referrer",
+      "rootUri": "file:///C:/Users/RajRu/AppData/Local/Pub/Cache/hosted/pub.dev/android_play_install_referrer-0.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "animated_text_kit",
       "rootUri": "file:///C:/Users/RajRu/AppData/Local/Pub/Cache/hosted/pub.dev/animated_text_kit-4.3.0",
       "packageUri": "lib/",

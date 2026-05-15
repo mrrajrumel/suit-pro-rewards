@@ -19,13 +19,20 @@ class AuthViewModel extends StateNotifier<AsyncValue<void>> {
       Response? spRes;
       try {
         spRes = await _suitProService.login(email, password);
-        final token = spRes.data?['token'];
-        if (token != null) {
-          setSuitProToken(token);
+        
+        if (spRes.statusCode == 200) {
+          final token = spRes.data?['token'];
+          if (token != null) {
+            setSuitProToken(token);
+          }
+        } else if (spRes.statusCode == 422) {
+           final message = spRes.data?['message'] ?? 'Validation failed on website';
+           // We don't throw here to allow Firebase fallback, 
+           // but we could log it or handle it.
+           debugPrint('SuitPro Login 422: $message');
         }
       } catch (e) {
-        // This is expected if the user is not on the main website.
-        // The original app ignored this error and proceeded with Firebase auth.
+        debugPrint('SuitPro Login Error: $e');
       }
 
       // 2. FIREBASE SIGN IN

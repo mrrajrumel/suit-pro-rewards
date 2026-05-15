@@ -321,7 +321,10 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             padding: EdgeInsets.zero,
             border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             child: InkWell(
-              onTap: () => setState(() => _mode = AuthMode.phoneAuth),
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                setState(() => _mode = AuthMode.phoneAuth);
+              },
               borderRadius: BorderRadius.circular(16.r),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -352,7 +355,10 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 color: AppTheme.gold.withValues(alpha: 0.08),
                 border: Border.all(color: AppTheme.gold.withValues(alpha: 0.15)),
                 child: InkWell(
-                  onTap: () => setState(() => _mode = AuthMode.login),
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    setState(() => _mode = AuthMode.login);
+                  },
                   borderRadius: BorderRadius.circular(16.r),
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 18.h),
@@ -380,7 +386,10 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 padding: EdgeInsets.zero,
                 border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 child: InkWell(
-                  onTap: () => setState(() => _mode = AuthMode.register),
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    setState(() => _mode = AuthMode.register);
+                  },
                   borderRadius: BorderRadius.circular(16.r),
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 18.h),
@@ -405,7 +414,10 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
         SizedBox(
           width: double.infinity,
           child: TextButton.icon(
-            onPressed: () => setState(() => _mode = AuthMode.adminLogin),
+            onPressed: () {
+              FocusScope.of(context).unfocus();
+              setState(() => _mode = AuthMode.adminLogin);
+            },
             icon: Icon(LucideIcons.lock, size: 10.sp),
             label: Text(
               'STAFF ACCESS',
@@ -474,7 +486,10 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
 
         SizedBox(height: 16.h),
         TextButton(
-          onPressed: () => setState(() => _mode = AuthMode.phoneAuth),
+          onPressed: () {
+            FocusScope.of(context).unfocus();
+            setState(() => _mode = AuthMode.phoneAuth);
+          },
           child: Text(
             'CHANGE NUMBER',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10.sp),
@@ -491,7 +506,10 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              onPressed: () => setState(() => _mode = AuthMode.landing),
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                setState(() => _mode = AuthMode.landing);
+              },
               icon: const Icon(LucideIcons.chevronLeft),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.white.withValues(alpha: 0.05),
@@ -589,8 +607,11 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
               validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
               trailing: (_mode == AuthMode.login || _mode == AuthMode.adminLogin)
                   ? GestureDetector(
-                      onTap: () => setState(() => _mode = AuthMode.forgotPassword),
-                      child: Text(
+                      onTap: () {
+                      FocusScope.of(context).unfocus();
+                      setState(() => _mode = AuthMode.forgotPassword);
+                    },
+                    child: Text(
                         'FORGOT?',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               fontSize: 9.sp,
@@ -609,9 +630,15 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
 
           SizedBox(height: 24.h),
           if (_mode == AuthMode.login)
-            _buildAuthToggle('NEW AROUND HERE? ', 'JOIN NOW', () => setState(() => _mode = AuthMode.register)),
+            _buildAuthToggle('NEW AROUND HERE? ', 'JOIN NOW', () {
+              FocusScope.of(context).unfocus();
+              setState(() => _mode = AuthMode.register);
+            }),
           if (_mode == AuthMode.register)
-            _buildAuthToggle('ALREADY JOINED? ', 'LOG IN', () => setState(() => _mode = AuthMode.login)),
+            _buildAuthToggle('ALREADY JOINED? ', 'LOG IN', () {
+              FocusScope.of(context).unfocus();
+              setState(() => _mode = AuthMode.login);
+            }),
         ],
       ).animate().fadeIn().slideX(begin: 0.1, end: 0),
     );
